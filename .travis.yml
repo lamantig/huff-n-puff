@@ -8,10 +8,5 @@ cache:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
 
-script:
-  - ./gradlew checkstyleMain checkstyleTest
-  - ./gradlew test
-  - ./gradlew jacocoTestReport
-
 after_success:
   - bash <(curl -s https://codecov.io/bash)
