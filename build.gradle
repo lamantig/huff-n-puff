@@ -6,7 +6,7 @@ plugins {
     id 'jacoco'
 }
 
-mainClassName = 'App'
+mainClassName = 'main.App'
 
 dependencies {
     compile 'com.google.guava:guava:23.0'
@@ -24,14 +24,14 @@ jacocoTestReport {
     }
 //    afterEvaluate {
 //        classDirectories = files(classDirectories.files.collect {
-//                fileTree(dir: it, exclude: 'App.*')
+//                fileTree(dir: it, exclude: ['main/**'])
 //            })
 //    }
 }
 
 jar {
     manifest {
-        attributes 'Main-Class': 'App'
+        attributes 'Main-Class': 'main.App'
     }
 }
 
