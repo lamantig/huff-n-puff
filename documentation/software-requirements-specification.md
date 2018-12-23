@@ -18,20 +18,20 @@ At the moment I still haven't researched the algorithms enough to say what is th
 
 ## sources
 
-https://en.wikipedia.org/wiki/Huffman_coding
+<https://en.wikipedia.org/wiki/Huffman_coding>
 
-https://en.wikipedia.org/wiki/LZ77_and_LZ78
+<https://en.wikipedia.org/wiki/LZ77_and_LZ78>
 
-https://en.wikipedia.org/wiki/Burrows–Wheeler_transform
+<https://en.wikipedia.org/wiki/Burrows–Wheeler_transform>
 
-https://en.wikipedia.org/wiki/Lossless_compression
+<https://en.wikipedia.org/wiki/Lossless_compression>
 
-https://en.wikipedia.org/wiki/Entropy_encoding
+<https://en.wikipedia.org/wiki/Entropy_encoding>
 
-https://en.wikipedia.org/wiki/7-Zip
+<https://en.wikipedia.org/wiki/7-Zip>
 
-https://en.wikipedia.org/wiki/Dictionary_coder
+<https://en.wikipedia.org/wiki/Dictionary_coder>
 
-https://en.wikipedia.org/wiki/Bzip2
+<https://en.wikipedia.org/wiki/Bzip2>
 
-https://www.cs.helsinki.fi/courses/582487/2015/K/K/1
+<https://www.cs.helsinki.fi/courses/582487/2015/K/K/1>
