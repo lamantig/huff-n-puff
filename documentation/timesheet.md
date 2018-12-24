@@ -1,8 +1,8 @@
 # timesheet
 
-Total time (hours:minutes): 10:00.
+Total time (hours:minutes): 15:45.
 
-## week1
+## week 1
 
 |             date |  time | tasks |
 | ---------------: | ----: | :---- |
@@ -15,7 +15,8 @@ Total time (hours:minutes): 10:00.
 
 |             date |  time | tasks    |
 | ---------------: | ----: | :------- |
-| **weekly total** | 00:00 | お疲れ様ぜぇ～！ |
+|       2018-12-23 |  5:45 | <span>research (Huffman coding)<br>fix Codacy issues (markdown)<br>object-oriented and algorithm design<br>created some classes</span> |
+| **weekly total** | 05:45 | お疲れ様ぜぇ～！ |
 
 ## week 3
 
@@ -27,7 +28,7 @@ Total time (hours:minutes): 10:00.
 
 |             date |  time | tasks    |
 | ---------------: | ----: | :------- |
-| **weekly total** | -0:00 | お疲れ様ぜぇ～！ |
+| **weekly total** | 00:00 | お疲れ様ぜぇ～！ |
 
 ## week 5
 
