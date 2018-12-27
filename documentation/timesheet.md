@@ -1,6 +1,6 @@
 # timesheet
 
-Total time (hours:minutes): 15:45.
+Total time (hours:minutes): 22:25.
 
 ## week 1
 
@@ -16,7 +16,9 @@ Total time (hours:minutes): 15:45.
 |             date |  time | tasks    |
 | ---------------: | ----: | :------- |
 |       2018-12-23 |  5:45 | <span>research (Huffman coding)<br>fix Codacy issues (markdown)<br>object-oriented and algorithm design<br>created some classes</span> |
-| **weekly total** | 05:45 | お疲れ様ぜぇ～！ |
+|       2018-12-24 |  3:00 | TUI skeleton |
+|       2018-12-26 |  3:40 | <span>research (Java language)<br>Compress class skeleton<br>Huffman class skeleton</span> |
+| **weekly total** | 11:25 | お疲れ様ぜぇ～！ |
 
 ## week 3
 

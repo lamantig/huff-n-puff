@@ -10,7 +10,7 @@ public class Quit extends BasicCommand {
     /**
      * Creates an instance of Quit.
      *
-     * @param io An IO to be used for input and output.
+     * @param io An IO to be used for communication.
      */
     public Quit(IO io) {
         super(io, "terminate program execution");

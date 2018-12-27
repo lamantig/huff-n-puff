@@ -4,13 +4,13 @@ import io.IO;
 
 public abstract class BasicCommand implements Command {
 
-    final IO io;
+    protected final IO io;
     private final String description;
 
     /**
      * Creates an instance of BasicCommand.
      *
-     * @param io The IO to be used for input and output.
+     * @param io An IO to be used for communication.
      * @param description A description of the command's functionality.
      */
     public BasicCommand(IO io, String description) {

@@ -5,17 +5,17 @@ public interface IO {
     /**
      * Prints the given String.
      *
-     * @param s The String to be printed.
+     * @param o The Object to be printed.
      */
-    void print(String s);
+    void print(Object o);
 
     /**
      * Prints the given String followed by a newline.
      *
-     * @param s The String to be printed.
+     * @param o The Object to be printed.
      */
-    default void println(String s) {
-        print(s + "\n");
+    default void println(Object o) {
+        print(o + "\n");
     }
 
     /**

@@ -17,12 +17,13 @@ public class TerminalIO implements IO {
     }
 
     @Override
-    public void print(String s) {
-        System.out.print(s);
+    public void print(Object o) {
+        System.out.print(o);
     }
 
     @Override
     public String getInput() {
+        print("> ");
         return scanner.nextLine();
     }
 
