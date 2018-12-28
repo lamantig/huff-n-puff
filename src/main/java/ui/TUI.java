@@ -39,20 +39,19 @@ public class TUI {
 
         String input;
         Command command;
-        Command unsupported = () -> io.println("unsupported command");
+        Command unsupported = () -> io.println("unsupported command\n");
 
-        io.println("\nwelcome to HUFF n PUFF!");
+        io.println("\nwelcome to HUFF n PUFF!\n");
 
         do {
-            io.println("\nsupported commands:");
+            io.println("supported commands:");
             for (CommandKey commKey : CommandKey.values()) {
                 String key = commKey.getKey();
                 io.printf("\t%-15s%s\n", key, commands.get(key).toString());
             }
-            io.println("");
 
             input = io.getInput().toLowerCase().trim();
-            io.println("");
+
             command = commands.getOrDefault(input, unsupported);
             command.execute();
 

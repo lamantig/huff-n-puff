@@ -20,7 +20,7 @@ public abstract class BasicCommand implements Command {
 
     @Override
     public void execute() {
-        io.println("this command hasn't been implemented yet");
+        io.println("this command hasn't been implemented yet\n");
     }
 
     @Override

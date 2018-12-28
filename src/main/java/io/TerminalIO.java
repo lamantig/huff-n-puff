@@ -23,14 +23,14 @@ public class TerminalIO implements IO {
 
     @Override
     public String getInput() {
-        print("> ");
-        return scanner.nextLine();
+        print("\n> ");
+        String input = scanner.nextLine();
+        println("");
+        return input;
     }
 
     @Override
     public void printf(String format, Object... args) {
         System.out.printf(format, args);
     }
-
-
 }

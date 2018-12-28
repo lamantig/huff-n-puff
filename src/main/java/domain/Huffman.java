@@ -1,7 +1,5 @@
 package domain;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
@@ -28,20 +26,15 @@ public final class Huffman implements CompressionAlgorithm {
     @Override
     public long compressFile(Path originalFilePath) {
 
-        // read data from file
         byte[] originalData = FileUtilities.readFile(originalFilePath);
         if (originalData == null) {
             return -1;
         }
 
         long startingTime = System.nanoTime();
-        // build the Huffman tree
-        HuffNode canonicalHuffmanTree = getCanonicalHuffmanTree(originalData);
-        // encode data
-        byte[] compressedData = compressData(originalData, canonicalHuffmanTree);
+        byte[] compressedData = compressData(originalData);
         long endingTime = System.nanoTime();
 
-        // write compressed file
         Path compressedFilePath = originalFilePath.resolveSibling(
                 originalFilePath.getFileName() + COMPRESSED_FILE_EXTENSION);
         if (!FileUtilities.writeFile(compressedFilePath, compressedData)) {
@@ -58,12 +51,13 @@ public final class Huffman implements CompressionAlgorithm {
      * tree.
      * @return The root of the tree.
      */
-    private static HuffNode getCanonicalHuffmanTree(byte[] data) {
+    private static HuffNode computeCanonicalHuffmanTree(byte[] data) {
         return new HuffNode(Byte.MIN_VALUE);
     }
 
     /**
-     * Compresses the given data using the given canonical Huffman tree.
+     * Compresses the given data by first computing a canonical Huffman tree,
+     * and then using it as compression code.
      * The compressed data will include (in this order):
      * - a long: length (in bytes) of the Huffman tree representation;
      * - a long: length (in bits) of the compressed representation of the original data;
@@ -71,11 +65,10 @@ public final class Huffman implements CompressionAlgorithm {
      * - compressed representation of the original data.
      *
      * @param data The data to be compressed.
-     * @param canonicalHuffmanTree The root of the canonical Huffman tree to
-     * be used for compressing the data.
      * @return Compressed data.
      */
-    private static byte[] compressData(byte[] data, HuffNode canonicalHuffmanTree) {
+    private static byte[] compressData(byte[] data) {
+        HuffNode canonicalHuffmanTree = computeCanonicalHuffmanTree(data);
         return data;
     }
 
@@ -87,7 +80,35 @@ public final class Huffman implements CompressionAlgorithm {
      */
     @Override
     public long decompressFile(Path compressedFilePath) {
-        return -1;
+
+        byte[] compressedData = FileUtilities.readFile(compressedFilePath);
+        if (compressedData == null) {
+            return -1;
+        }
+
+        long startingTime = System.nanoTime();
+        byte[] originalData = decompressData(compressedData);
+        long endingTime = System.nanoTime();
+
+        Path originalFilePath = FileUtilities.cutPathTail(
+                compressedFilePath, COMPRESSED_FILE_EXTENSION.length());
+        if (!FileUtilities.writeFile(originalFilePath, originalData)) {
+            return -1;
+        }
+
+        return endingTime - startingTime;
+    }
+
+    /**
+     * Decompresses the given compressed data by first building the canonical
+     * Huffman tree that was used for compression (using its representation,
+     * included in the compressed data) and then using it as decompression code.
+     *
+     * @param compressedData The compressed data to be decompressed.
+     * @return The original, uncompressed data.
+     */
+    private static byte[] decompressData(byte[] compressedData) {
+        return compressedData;
     }
 
     /**

@@ -3,6 +3,7 @@ package domain;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * A utility class with File access methods.
@@ -40,5 +41,23 @@ public class FileUtilities {
             System.out.println(e);
             return false;
         }
+    }
+
+    /**
+     * Removes the last N characters from the String representation of the given
+     * Path (where N is given by tailLength) and returns the new Path obtained
+     * from the truncated String.
+     *
+     * @param path The original Path.
+     * @param tailLength The number of characters to cut.
+     * @return The resulting Path after the cutting.
+     */
+    public static Path cutPathTail(Path path, int tailLength) {
+        if (tailLength <= 0) {
+            return path;
+        }
+        String pathString = path.toString();
+        String cutPathString = pathString.substring(0, pathString.length() - tailLength);
+        return Paths.get(cutPathString);
     }
 }

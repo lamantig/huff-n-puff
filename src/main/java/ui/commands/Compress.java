@@ -1,18 +1,13 @@
 package ui.commands;
 
 import domain.CompressionAlgorithm;
-import domain.Huffman;
 import io.IO;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * A Command for compressing a file.
  */
 public class Compress extends BasicCommand {
-
-    private final Map<String, CompressionAlgorithm> compressionAlgorithms;
 
     /**
      * Creates an instance of Compress.
@@ -21,8 +16,6 @@ public class Compress extends BasicCommand {
      */
     public Compress(IO io) {
         super(io, "compress a file using an algorithm of your choice");
-        this.compressionAlgorithms = new HashMap<>();
-        compressionAlgorithms.put(HUFFMAN, new Huffman());
     }
 
     /**
@@ -42,9 +35,9 @@ public class Compress extends BasicCommand {
         }
 
         if (algorithm.compressFile(originalFilePath) >= 0) {
-            io.println("\nfile compression completed successfully!");
+            io.println("file compression completed successfully!\n");
         } else {
-            io.println("\nERROR! file compression didn't complete.");
+            io.println("ERROR! file compression didn't complete\n");
         }
     }
 
@@ -56,22 +49,17 @@ public class Compress extends BasicCommand {
      */
     private CompressionAlgorithm askForAlgorithm() {
 
-        io.println("\nplease enter the compression algorithm to be used" + CANCEL_PROMPT);
-        compressionAlgorithms.entrySet().stream()
-                .sorted((e1, e2) -> e1.getKey().compareTo(e2.getKey()))
-                .forEachOrdered(e -> {
-                    io.printf("\t%-15s%s\n", e.getKey(), e.getValue().getDescription());
-                });
-        io.println("");
+        io.println("please enter the compression algorithm to be used" + CANCEL_PROMPT);
+        CommandUtilities.printAlgorithmsWithKeys(CommandUtilities.ALGORITHMS_BY_NAME, io);
 
         String input = io.getInput().toLowerCase().trim();
         if (input.equals(CANCEL)) {
             return null;
         }
 
-        CompressionAlgorithm algorithm = compressionAlgorithms.get(input);
+        CompressionAlgorithm algorithm = CommandUtilities.ALGORITHMS_BY_NAME.get(input);
         if (algorithm == null) {
-            io.println("\nunsupported algorithm!");
+            io.println("unsupported algorithm!\n");
             return askForAlgorithm();
         }
 

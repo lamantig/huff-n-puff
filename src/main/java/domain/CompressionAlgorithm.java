@@ -39,5 +39,4 @@ public interface CompressionAlgorithm {
      * compressed files).
      */
     public String getExtension();
-
 }
