@@ -32,12 +32,7 @@ public class Decompress extends BasicCommand {
 
         CompressionAlgorithm algorithm = selectAlgorithm(compressedFilePath);
         if (algorithm == null) {
-            io.println("unfortunately we cannot decompress the file (or directory) "
-                    + "corresponding to the path you just entered!\n"
-                    + "we can decompress files with the following extensions:");
-            CommandUtilities.printAlgorithmsWithKeys(
-                    CommandUtilities.ALGORITHMS_BY_EXTENSION, io);
-            io.println("");
+            printCompatibleExtensions();
             return;
         }
 
@@ -85,5 +80,15 @@ public class Decompress extends BasicCommand {
         }
 
         return pathString.substring(extensionStartingIndex);
+    }
+
+    private void printCompatibleExtensions() {
+
+        io.println("unfortunately we cannot decompress the file (or directory) "
+                + "corresponding to the path you just entered!\n"
+                + "we can decompress files with the following extensions:");
+        CommandUtilities.printAlgorithmsWithKeys(
+                CommandUtilities.ALGORITHMS_BY_EXTENSION, io);
+        io.println("");
     }
 }
