@@ -1,6 +1,6 @@
 # timesheet
 
-Total time (hours:minutes): 31:30.
+Total time (hours:minutes): 39:00.
 
 ## week 1
 
@@ -20,7 +20,8 @@ Total time (hours:minutes): 31:30.
 |       2018-12-26 |  3:40 | <span>research (Java language)<br>Compress class skeleton<br>Huffman class skeleton</span> |
 |       2018-12-27 |  6:35 | <span>Compress class ready<br>Huffman class skeleton</span> |
 |       2018-12-28 |  2:30 | <span>Decompress class ready<br>ui classes refactored</span> |
-| **weekly total** | 21:30 | お疲れ様ぜぇ～！ |
+|       2018-12-29 |  7:30 | <span>research (Java, ways to read bytes from files)<br>Huffman compression algorithm (not ready yet)<br>week 2 report</span> |
+| **weekly total** | 29:00 | お疲れ様ぜぇ～！ |
 
 ## week 3
 

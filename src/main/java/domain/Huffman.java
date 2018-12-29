@@ -1,6 +1,11 @@
 package domain;
 
 import java.nio.file.Path;
+import java.util.ArrayDeque;
+import java.util.Arrays;
+import java.util.BitSet;
+import java.util.Comparator;
+import java.util.Queue;
 
 /**
  * A class with static methods for file compression/decompression using Huffman
@@ -14,6 +19,7 @@ public final class Huffman implements CompressionAlgorithm {
      */
     public static final String COMPRESSED_FILE_EXTENSION = ".huff";
     public static final String DESCRIPTION = "canonical Huffman coding";
+    private static final int POSSIBLE_BYTE_VALUES_COUNT = Byte.MAX_VALUE + 1 - Byte.MIN_VALUE;
 
     /**
      * Compresses the file at the given path, using Huffman coding.
@@ -52,7 +58,88 @@ public final class Huffman implements CompressionAlgorithm {
      * @return The root of the tree.
      */
     private static HuffNode computeCanonicalHuffmanTree(byte[] data) {
-        return new HuffNode(Byte.MIN_VALUE);
+
+        // an array containing occurrence counts for each possible byte value
+        long[] byteCounts = countByteOccurrences(data);
+
+        // an array with all the leaf nodes, sorted by weight
+        HuffNode[] leafNodes = sortedLeafNodes(byteCounts);
+
+        return linearTimeHuffman(leafNodes);
+    }
+
+    private static long[] countByteOccurrences(byte[] data) {
+
+        long[] byteCounts = new long[POSSIBLE_BYTE_VALUES_COUNT];
+
+        for (byte byteValue : data) {
+            // array indexes have to be positive, so we read the byte as unsigned
+            byteCounts[Byte.toUnsignedInt(byteValue)]++;
+        }
+
+        return byteCounts;
+    }
+
+    private static HuffNode[] sortedLeafNodes(long[] byteCounts) {
+
+        HuffNode[] leafNodes = new HuffNode[POSSIBLE_BYTE_VALUES_COUNT];
+        int nodesCount = 0;
+
+        for (int byteValue = 0; byteValue < POSSIBLE_BYTE_VALUES_COUNT; byteValue++) {
+            long byteCount = byteCounts[byteValue];
+            if (byteCount > 0) {
+                // the cast to byte is the reverse of Byte.toUnsignedInt(byteValue)
+                leafNodes[nodesCount++] = new HuffNode((byte) byteValue, byteCount);
+            }
+        }
+
+        leafNodes = Arrays.copyOfRange(leafNodes, 0, nodesCount);
+        Arrays.sort(leafNodes, new HuffNode.ByWeight());
+        return leafNodes;
+    }
+
+    private static HuffNode linearTimeHuffman(HuffNode[] leafNodes) {
+
+        Queue<HuffNode> q1 = new ArrayDeque<>(Arrays.asList(leafNodes));
+        Queue<HuffNode> q2 = new ArrayDeque<>();
+
+        HuffNode leftChild, rightChild;
+
+        while (!q1.isEmpty() || q2.size() > 1) {
+            /* break ties between queues by choosing the item in the first queue,
+            to minimize the variance of codeword length
+            (see https://en.wikipedia.org/wiki/Huffman_coding#Compression ) */
+            leftChild = chooseNodeFromQueues(q1, q2);
+            rightChild = chooseNodeFromQueues(q1, q2);
+
+            q2.offer(new HuffNode(leftChild, rightChild));
+        }
+
+        return q2.peek();
+    }
+
+    /**
+     * Please note, at least one Queue must be not empty. Also ties break in favor of the first queue.
+     * @param q1
+     * @param q2
+     * @return
+     */
+    private static HuffNode chooseNodeFromQueues(Queue<HuffNode> q1, Queue<HuffNode> q2) {
+        HuffNode q1Head = q1.peek();
+        HuffNode q2Head = q2.peek();
+        Comparator<HuffNode> byWeight = new HuffNode.ByWeight();
+        HuffNode chosen;
+        if (q1Head == null) {
+            chosen = q2.poll();
+        } else if (q2Head == null) {
+            chosen = q1.poll();
+        } else if (new HuffNode.ByWeight().compare(q1Head, q2Head) <= 0) {
+            // break ties by choosing the item in q1
+            chosen = q1.poll();
+        } else {
+            chosen = q2.poll();
+        }
+        return chosen;
     }
 
     /**
@@ -68,8 +155,19 @@ public final class Huffman implements CompressionAlgorithm {
      * @return Compressed data.
      */
     private static byte[] compressData(byte[] data) {
-        HuffNode canonicalHuffmanTree = computeCanonicalHuffmanTree(data);
+        HuffNode canonicalHuffmanTreeRoot = computeCanonicalHuffmanTree(data);
+
+        computeCodewords(canonicalHuffmanTreeRoot, new BitSet());
+
         return data;
+    }
+
+    /**
+     * A tree DFS for
+     * @param root
+     */
+    private static void computeCodewords(HuffNode node, BitSet code) {
+
     }
 
     /**
