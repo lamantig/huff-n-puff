@@ -33,6 +33,7 @@ public class Decompress extends BasicCommand {
         CompressionAlgorithm algorithm = selectAlgorithm(compressedFilePath);
         if (algorithm == null) {
             printCompatibleExtensions();
+            execute();
             return;
         }
 
