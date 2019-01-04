@@ -1,6 +1,6 @@
 # timesheet
 
-Total time (hours:minutes): 39:00.
+Total time (hours:minutes): 78:50.
 
 ## week 1
 
@@ -27,7 +27,13 @@ Total time (hours:minutes): 39:00.
 
 |             date |  time | tasks    |
 | ---------------: | ----: | :------- |
-| **weekly total** | 00:00 | お疲れ様ぜぇ～！ |
+|       2018-12-30 |  4:45 | <span>research (Java, BitSet and bitwise operations)<br>BitSequence class</span> |
+|       2018-12-31 |  9:30 | <span>research (Java, ways to read file to byte[] and long[])<br>BitSequence class<br>BitSequenceTest and debug</span> |
+|       2019-01-01 |  6:10 | <span>BitSequenceTest and debug<br>upgraded dependency to junit5 (jupiter)</span> |
+|       2019-01-02 |  4:15 | <span>Checkstyle suppressions<br>BitSequence class<br>Huffman class</span> |
+|       2019-01-03 |  6:30 | <span>Huffman class<br>BitSequence.nextSequence()</span> |
+|       2019-01-04 |  8:40 | <span>Huffman class<br>TreeRepresentation class</span> |
+| **weekly total** | 39:50 | お疲れ様ぜぇ～！ |
 
 ## week 4
 
