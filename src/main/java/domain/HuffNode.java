@@ -1,6 +1,5 @@
 package domain;
 
-import java.util.BitSet;
 import java.util.Comparator;
 
 /**
@@ -18,16 +17,13 @@ public class HuffNode {
      */
     private final Long weight;
     /**
-     * Codeword for the symbol represented by this node.
+     * BitSequence for the symbol represented by this node (its length is also
+     * the node's height in the tree).
      */
-    private BitSet code;
-    /**
-     * Codeword's length (and node's height in the tree).
-     */
-    private Integer codeLength;
+    private BitSequence codeword;
 
-    private final HuffNode leftChild;
-    private final HuffNode rightChild;
+    private HuffNode leftChild,
+                     rightChild;
 
     public static class ByWeight implements Comparator<HuffNode> {
         @Override
@@ -39,13 +35,25 @@ public class HuffNode {
     public static class ByCanonicalOrder implements Comparator<HuffNode> {
         @Override
         public int compare(HuffNode hn1, HuffNode hn2) {
-            int byLength = hn1.codeLength.compareTo(hn2.codeLength);
+            int byLength = hn1.codeword.getLengthInBits()
+                    .compareTo(hn2.codeword.getLengthInBits());
             if (byLength == 0) {
                 // alphabetical order
                 return Byte.toUnsignedInt(hn1.symbol) - Byte.toUnsignedInt(hn2.symbol);
             }
             return byLength;
         }
+    }
+
+    /**
+     * Constructor for leaf nodes. It creates a new HuffNode instance
+     * corresponding to the given symbol.
+     *
+     * @param symbol A symbol in the original alphabet (8-bit alphabet); if this
+     * HuffNode is an internal node (not a leaf), symbol should be null.
+     */
+    public HuffNode(Byte symbol) {
+        this(symbol, 0);
     }
 
     /**
@@ -76,5 +84,37 @@ public class HuffNode {
         this.weight = leftChild.weight + rightChild.weight;
         this.leftChild = leftChild;
         this.rightChild = rightChild;
+    }
+
+    public boolean isLeaf() {
+        return symbol != null;
+    }
+
+    public void setCodeword(BitSequence codeword) {
+        this.codeword = codeword;
+    }
+
+    public void setLeftChild(HuffNode leftChild) {
+        this.leftChild = leftChild;
+    }
+
+    public void setRightChild(HuffNode rightChild) {
+        this.rightChild = rightChild;
+    }
+
+    public Byte getSymbol() {
+        return symbol;
+    }
+
+    public BitSequence getCodeword() {
+        return codeword;
+    }
+
+    public HuffNode getLeftChild() {
+        return leftChild;
+    }
+
+    public HuffNode getRightChild() {
+        return rightChild;
     }
 }
