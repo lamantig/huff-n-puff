@@ -81,7 +81,8 @@ public class HuffNode {
      */
     public HuffNode(HuffNode leftChild, HuffNode rightChild) {
         this.symbol = null;
-        this.weight = leftChild.weight + rightChild.weight;
+        this.weight = (leftChild != null ? leftChild.weight : 0)
+                + (rightChild != null ? rightChild.weight : 0);
         this.leftChild = leftChild;
         this.rightChild = rightChild;
     }
