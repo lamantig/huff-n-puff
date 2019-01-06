@@ -1,9 +1,12 @@
 package domain;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 
 /**
  * A utility class with File access methods.
@@ -36,6 +39,21 @@ public class FileUtilities {
     public static boolean writeFile(Path path, byte[] data) {
         try {
             Files.write(path, data);
+            return true;
+        } catch (IOException e) {
+            System.out.println(e);
+            return false;
+        }
+    }
+
+    public static boolean writeFile(Path path, byte[] data, int length) {
+        try {
+            FileChannel channel = FileChannel.open(path,StandardOpenOption.WRITE,
+                    StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            ByteBuffer buffer = ByteBuffer.wrap(data, 0, length);
+            while(buffer.hasRemaining()) {
+                channel.write(buffer);
+            }
             return true;
         } catch (IOException e) {
             System.out.println(e);

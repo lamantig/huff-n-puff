@@ -43,12 +43,13 @@ public final class Huffman implements CompressionAlgorithm {
         }
 
         long startingTime = System.nanoTime();
-        byte[] compressedData = compressData(originalData);
+        BitSequence compressedData = compressData(originalData);
         long endingTime = System.nanoTime();
 
         Path compressedFilePath = originalFilePath.resolveSibling(
                 originalFilePath.getFileName() + COMPRESSED_FILE_EXTENSION);
-        if (!FileUtilities.writeFile(compressedFilePath, compressedData)) {
+        if (!FileUtilities.writeFile(compressedFilePath,
+                compressedData.getBits(), compressedData.getLengthInBytes())) {
             return -1;
         }
 
@@ -166,7 +167,7 @@ public final class Huffman implements CompressionAlgorithm {
      * @param data The data to be compressed.
      * @return Compressed data.
      */
-    private static byte[] compressData(byte[] data) {
+    private static BitSequence compressData(byte[] data) {
         HuffNode[] leafNodes = computeCanonicalHuffmanTree(data);
         BitSequence[] huffmanCode = extractHuffmanCode(leafNodes);
         TreeRepresentation treeRepresentation = new TreeRepresentation(leafNodes);
@@ -187,7 +188,7 @@ public final class Huffman implements CompressionAlgorithm {
         }
         bits = compressedData.getBits();
         bits[OFFSET_FREEBITS] = (byte) compressedData.getFreeBits();
-        return bits;
+        return compressedData;
     }
 
     /**
