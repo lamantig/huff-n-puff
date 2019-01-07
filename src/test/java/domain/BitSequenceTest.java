@@ -1,5 +1,6 @@
 package domain;
 
+import java.util.Arrays;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,6 +15,8 @@ public class BitSequenceTest {
                          bitsString1 = "010010111110011011011101010010000001101110010101",
                          bitsString2 = "11001001110001001001000110000111",
                          bitsString3 = "0111100100011101";
+
+    private BitSequence bitSeq;
 
     private void initBits1() {
         bits1 = new byte[]{
@@ -53,7 +56,7 @@ public class BitSequenceTest {
     public void appendBitWorksCorrectlyWhenItDoesNotNeedToExpandBitsArray() {
 
         int strLen = 11;
-        BitSequence bitSeq = new BitSequence();
+        bitSeq = new BitSequence();
 
         appendBitsFromString(bitSeq, bitsString1, strLen);
 
@@ -65,7 +68,7 @@ public class BitSequenceTest {
 
         int freeBits = 3;
         int strLen = 16;
-        BitSequence bitSeq = new BitSequence(bits2, freeBits);
+        bitSeq = new BitSequence(bits2, freeBits);
 
         appendBitsFromString(bitSeq, bitsString1, strLen);
 
@@ -188,11 +191,10 @@ public class BitSequenceTest {
         }
     }
 
-    // needs more test cases
     @Test
     public void nextSequenceReturnsSequenceCorrespondingToNextBinaryNumber() {
 
-        BitSequence bitSeq = new BitSequence();
+        bitSeq = new BitSequence();
         assertEquals("", bitSeq.toString());
         bitSeq = bitSeq.nextSequence();
         assertEquals("0", bitSeq.toString());
@@ -206,19 +208,155 @@ public class BitSequenceTest {
         assertEquals("100", bitSeq.toString());
         bitSeq = bitSeq.nextSequence();
         assertEquals("101", bitSeq.toString());
+
+        bitSeq = new BitSequence(new byte[]{(byte) 0xFF, (byte) 0xF0}, 4);
+        bitSeq = bitSeq.nextSequence();
+        assertEquals("1000000000000", bitSeq.toString());
+
+        bitSeq = new BitSequence(new byte[]{(byte) 0b11101100}, 0);
+        bitSeq = bitSeq.nextSequence();
+        assertEquals("11101101", bitSeq.toString());
+
+        bitSeq = new BitSequence(new byte[]{0, (byte) 0xFF, (byte) 0xFF}, 0);
+        bitSeq = bitSeq.nextSequence();
+        assertEquals("000000010000000000000000", bitSeq.toString());
     }
 
     @Test
-    public void nextSequencePreservesLeadingZeros() {
+    public void nextSequencePreservesCorrectAmountOfLeadingZeros() {
 
+        bitSeq = new BitSequence(new byte[]{(byte) 0b00001100, (byte) 0b11111111}, 0);
+
+        bitSeq = bitSeq.nextSequence();
+        assertEquals("0000110100000000", bitSeq.toString());
+        bitSeq = bitSeq.nextSequence();
+        assertEquals("0000110100000001", bitSeq.toString());
+        bitSeq = bitSeq.nextSequence();
+        assertEquals("0000110100000010", bitSeq.toString());
+
+        bitSeq = new BitSequence(new byte[]{(byte) 0b00111111}, 0);
+
+        bitSeq = bitSeq.nextSequence();
+        assertEquals("01000000", bitSeq.toString());
+        bitSeq = bitSeq.nextSequence();
+        assertEquals("01000001", bitSeq.toString());
+        bitSeq = bitSeq.nextSequence();
+        assertEquals("01000010", bitSeq.toString());
+
+        bitSeq = new BitSequence(new byte[]{(byte) 0, (byte) 0, (byte) 0b11000000}, 5);
+
+        bitSeq = bitSeq.nextSequence();
+        assertEquals("0000000000000000111", bitSeq.toString());
+        bitSeq = bitSeq.nextSequence();
+        assertEquals("0000000000000001000", bitSeq.toString());
+        bitSeq = bitSeq.nextSequence();
+        assertEquals("0000000000000001001", bitSeq.toString());
     }
 
     @Test
-    public void constructorThrowsExceptionWhenCalledWithIllegalArguments() {
+    public void setReadPositionSetsPositionCorrectlyWhenGivenLegalPosition() {
+
+        byte[] bits;
+        for (int position = 0; position < 32; position++) {
+
+            int index = position / Byte.SIZE;
+            int offset = position % Byte.SIZE;
+            int freeBits = Byte.SIZE - offset;
+
+            bitSeq = new BitSequence(new byte[4], freeBits, index);
+            bitSeq.append(true);
+            bitSeq.setReadPosition(index, offset);
+            assertTrue(bitSeq.readNextBit());
+
+            bits = new byte[4];
+            Arrays.fill(bits, (byte) 0b11111111);
+            bitSeq = new BitSequence(bits, freeBits, index);
+            bitSeq.append(false);
+            bitSeq.setReadPosition(index, offset);
+            assertFalse(bitSeq.readNextBit());
+        }
+    }
+
+    @Test
+    public void setReadPositionSetsPositionToZeroWhenGivenIllegalPosition() {
+
+        int legalIndex = 1;
+        int legalOffset = 5;
+        int a = Byte.SIZE + 1;
+        // these illegalIndexes and illegalOffset are illegal when combined
+        // elementwise, not necessarily by themselves
+        int[] illegalIndexes = new int[]{-33, -5, -3, -1,  0, 0, -7, 2, 2, 3};
+        int[] illegalOffsets = new int[]{-44, -1,  0,  4, -1, a,  a, 0, 3, 0};
+        byte[] bits = new byte[]{(byte) 0b01111111, (byte) 0xFF, (byte) 0, (byte) 0};
+
+        bitSeq = new BitSequence(bits, 0, legalIndex);
+        assertFalse(bitSeq.readNextBit());
+
+        for (int i = 0; i < illegalIndexes.length; i++) {
+            bitSeq.setReadPosition(legalIndex, legalOffset);
+            assertTrue(bitSeq.readNextBit());
+            bitSeq.setReadPosition(illegalIndexes[i], illegalOffsets[i]);
+            assertFalse(bitSeq.readNextBit());
+        }
+    }
+
+    @Test
+    public void readNextBitReturnsNullWhenReadPositionIsAfterLastBitOfSequence() {
+
+        int index = 2;
+        int offset = 3;
+        byte[] bits = new byte[]{0, 127, 17, 0};
+
+        bitSeq = new BitSequence(bits, Byte.SIZE - offset, index);
+        bitSeq.setReadPosition(index, offset - 1);
+        assertNotNull(bitSeq.readNextBit());
+        assertNull(bitSeq.readNextBit());
+    }
+
+    @Test
+    public void getFreeBitsReturnsNumberOfFreeBitsInLastByteOfSequence() {
+        for (int freeBits = 0; freeBits <= Byte.SIZE; freeBits++) {
+            bitSeq = new BitSequence(bits1, freeBits);
+            assertEquals(freeBits % Byte.SIZE, bitSeq.getFreeBits());
+        }
+    }
+
+    @Test
+    public void getBitsReturnsInternalBitsArray() {
+        bitSeq = new BitSequence(bits1, 0);
+        assertEquals(bits1, bitSeq.getBits());
+    }
+
+    @Test
+    public void constructorWithLengthInBitsReturnsBitSequenceOfCorrectLength() {
+        for (int length = 0; length < 30; length++) {
+            bitSeq = new BitSequence(length);
+            assertEquals(new Long(length), bitSeq.getLengthInBits());
+        }
+    }
+
+    @Test
+    public void constructorThrowsExceptionWhenCalledWithIllegalLengthInBitsArgument() {
+        assertThrows(IllegalArgumentException.class, () -> new BitSequence(-23));
+        assertThrows(IllegalArgumentException.class, () -> new BitSequence(-1));
+        assertThrows(IllegalArgumentException.class, () -> new BitSequence(((long) Integer.MAX_VALUE) * Byte.SIZE));
+        assertThrows(IllegalArgumentException.class, () -> new BitSequence(42000000000L));
+    }
+
+    @Test
+    public void constructorThrowsExceptionWhenCalledWithIllegalFreeBitsArgument() {
         assertThrows(IllegalArgumentException.class, () -> new BitSequence(bits1, -42));
         assertThrows(IllegalArgumentException.class, () -> new BitSequence(bits1, -1));
         assertThrows(IllegalArgumentException.class, () -> new BitSequence(bits1, Byte.SIZE + 1));
         assertThrows(IllegalArgumentException.class, () -> new BitSequence(bits1, 23));
+    }
+
+    @Test
+    public void constructorThrowsExceptionWhenCalledWithIllegalWriteIndexArgument() {
+        assertThrows(IllegalArgumentException.class, () -> new BitSequence(bits1, 3, -50));
+        assertThrows(IllegalArgumentException.class, () -> new BitSequence(bits1, 3, -1));
+        assertThrows(IllegalArgumentException.class, () -> new BitSequence(bits1, 3, bits1.length));
+        assertThrows(IllegalArgumentException.class, () -> new BitSequence(bits1, 3, bits1.length + 71));
     }
 
     private void appendBitsFromString(BitSequence bitSeq, String bitsString, int strLen) {
