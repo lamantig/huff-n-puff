@@ -74,7 +74,7 @@ public final class Huffman implements CompressionAlgorithm {
 
         computeCodewords(huffmanTree, new BitSequence());
 
-        Arrays.sort(leafNodes, new HuffNode.ByCanonicalOrder());
+        Utils.mergesort(leafNodes, new HuffNode.ByCanonicalOrder());
         convertToCanonical(leafNodes);
 
         return leafNodes;
@@ -106,7 +106,7 @@ public final class Huffman implements CompressionAlgorithm {
         }
 
         leafNodes = Arrays.copyOfRange(leafNodes, 0, nodesCount);
-        Arrays.sort(leafNodes, new HuffNode.ByWeight());
+        Utils.mergesort(leafNodes, new HuffNode.ByWeight());
         return leafNodes;
     }
 
