@@ -29,7 +29,7 @@ public class TreeRepresentation {
      * Constant to be used in the special case when there are 256 symbols with
      * codeword of length Byte.SIZE (and codewordLengthsLength is set to zero).
      */
-    private final int specialCase = (int) Math.pow(2, Byte.SIZE);
+    private static final int SPECIAL_CASE = (int) Math.pow(2, Byte.SIZE);
 
     /**
      * Returns an instance of TreeRepresentation corresponding to the Huffman
@@ -46,7 +46,7 @@ public class TreeRepresentation {
         int maxLength = leafNodes[leafNodes.length - 1]
                 .getCodeword().getLengthInBits().intValue();
 
-        if (maxLength == Byte.SIZE && leafNodes.length == specialCase) {
+        if (maxLength == Byte.SIZE && leafNodes.length == SPECIAL_CASE) {
             // special case when there are 256 symbols with codeword of length Byte.SIZE
             codewordLengthsLength = 0;
             bytes = new byte[leafNodes.length];
@@ -81,7 +81,7 @@ public class TreeRepresentation {
         int symbolsLength;
         if (codewordLengthsLength == 0) {
             // special case when there are 256 symbols with codeword of length Byte.SIZE
-            symbolsLength = specialCase;
+            symbolsLength = SPECIAL_CASE;
         } else {
             symbolsLength = 0;
             // offset where the second part of treerepr starts
