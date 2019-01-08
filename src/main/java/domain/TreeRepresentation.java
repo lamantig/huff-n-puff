@@ -1,102 +1,190 @@
 package domain;
 
+/**
+ * Represents a canonical Huffman tree. The second part (called "symbols") of
+ * this representation contains all symbols in canonical order (so firstly by
+ * bit-length of their codeword, and secondly by alphabetical order); the first
+ * part (called "codewordLengths") contains the number of symbols for each
+ * bit-length. See Wikipedia for more details:
+ * https://en.wikipedia.org/wiki/Canonical_Huffman_code#Encoding_the_codebook
+ */
 public class TreeRepresentation {
 
-    // all to be interpreted as unsigned bytes
+    /**
+     * Array used to store this tree representation; each byte is to be
+     * interpreted as unsigned, meaning that each element of this array can have
+     * values ranging from 0 to 255 (both inclusive). The special case when 256
+     * codewords have the same length (which will then be Byte.SIZE) is handled
+     * by setting {@link codewordLengthsLength} to zero (since in that case we
+     * know there are 256 different symbols and their codeword lengths are all
+     * Byte.SIZE).
+     */
     private final byte[] bytes;
+    /**
+     * Length (in bytes) of the first part of this tree representation, where
+     * the counts for each codeword length are stored.
+     */
     private final int codewordLengthsLength;
-    private final int totalLength;
+    /**
+     * Constant to be used in the special case when there are 256 symbols with
+     * codeword of length Byte.SIZE (and codewordLengthsLength is set to zero).
+     */
+    private final int specialCase = (int) Math.pow(2, Byte.SIZE);
 
     /**
-     * Leaves are sorted in canonical order.
-     * @param leafNodes
+     * Returns an instance of TreeRepresentation corresponding to the Huffman
+     * tree whose leaves are found in array leafNodes (given as parameter).
+     *
+     * @param leafNodes Leaves of the Huffman tree of which we want a
+     * representation; this array must be sorted in canonical order (so firstly
+     * by bit-length of their codeword, and secondly by alphabetical order; see
+     * the HuffNode class for more info).
      */
     public TreeRepresentation(HuffNode[] leafNodes) {
-        // since there's one entry for each length from 1 to maxLength,
-        // which is the length of the last leaf's codeword since they are sorted
-        codewordLengthsLength = leafNodes[leafNodes.length - 1]
+
+        // maxLength is the length of the last leaf's codeword, since they are sorted
+        int maxLength = leafNodes[leafNodes.length - 1]
                 .getCodeword().getLengthInBits().intValue();
-        // this should be bigger than needed (or equal)
-        // also note, byte[] are initialized to 0
-        bytes = new byte[codewordLengthsLength + leafNodes.length];
 
-        for (HuffNode leaf : leafNodes) {
-            // consciously allow "overflow", since bytes are to be interpreted as unsigned,
-            // so each of these counts could be up to 255
-            // -1 is because length 0 isn't used
-            bytes[leaf.getCodeword().getLengthInBits().intValue() - 1]++;
-        }
+        if (maxLength == Byte.SIZE && leafNodes.length == specialCase) {
+            // special case when there are 256 symbols with codeword of length Byte.SIZE
+            codewordLengthsLength = 0;
+            bytes = new byte[leafNodes.length];
+            for (int i = 0; i < leafNodes.length; i++) {
+                bytes[i] = leafNodes[i].getSymbol();
+            }
+        } else {
+            // since there's one entry for each length from 1 to maxLength
+            codewordLengthsLength = maxLength;
+            bytes = new byte[codewordLengthsLength + leafNodes.length];
 
-        int i = codewordLengthsLength;
-        for (HuffNode leaf : leafNodes) {
-            bytes[i++] = leaf.getSymbol();
+            int i = codewordLengthsLength;
+            for (HuffNode leaf : leafNodes) {
+                // consciously allow "overflow", since bytes are to be interpreted as unsigned
+                // length 0 isn't used, so the count for each codeword length l is in bytes[l-1]
+                bytes[leaf.getCodeword().getLengthInBits().intValue() - 1]++;
+                bytes[i++] = leaf.getSymbol();
+            }
         }
-        totalLength = i;
     }
 
     /**
+     * Returns an instance of TreeRepresentation built from array compressedData (given as a parameter).
      *
-     * @param compressedData
+     * @param compressedData Array used to build the tree representation. It
+     * must have been encoded by the Huffman class.
      */
     public TreeRepresentation(byte[] compressedData) {
+
         codewordLengthsLength = Byte.toUnsignedInt(compressedData[Huffman.OFFSET_CWLENGTHS_LENGTH]);
-        int symbolsLength = 0;
-        // offset where the second part of treerepr starts
-        // meaning that first part is cwLengths, second is symbols (or original alphabet)
-        // so totalLength = codewordLengthsLength + symbolsLength
-        int symbolsOffset = Huffman.OFFSET_TREE + codewordLengthsLength;
-        for (int i = Huffman.OFFSET_TREE; i < symbolsOffset; i++) {
-            symbolsLength += Byte.toUnsignedInt(compressedData[i]);
+
+        int symbolsLength;
+        if (codewordLengthsLength == 0) {
+            // special case when there are 256 symbols with codeword of length Byte.SIZE
+            symbolsLength = specialCase;
+        } else {
+            symbolsLength = 0;
+            // offset where the second part of treerepr starts
+            // meaning that first part is cwLengths, second is symbols (or original alphabet)
+            // so totalLength = codewordLengthsLength + symbolsLength
+            int symbolsOffset = Huffman.OFFSET_TREE + codewordLengthsLength;
+            for (int i = Huffman.OFFSET_TREE; i < symbolsOffset; i++) {
+                symbolsLength += Byte.toUnsignedInt(compressedData[i]);
+            }
         }
-        totalLength = codewordLengthsLength + symbolsLength;
+
+        int totalLength = codewordLengthsLength + symbolsLength;
         bytes = new byte[totalLength];
         System.arraycopy(compressedData, Huffman.OFFSET_TREE, bytes, 0, totalLength);
     }
 
     /**
+     * Returns an array containing the leaves of the Huffman tree this is a
+     * representation of.
      *
-     * @return
+     * @return Leaves (HuffNodes) of the Huffman tree this is a representation
+     * of.
      */
     public HuffNode[] buildLeafNodes() {
-        int symbolsLength = totalLength - codewordLengthsLength;
+
+        int symbolsLength = bytes.length - codewordLengthsLength;
         HuffNode[] leafNodes = new HuffNode[symbolsLength];
-        // each length l is in bytes[l-1]
-        int codewordLength = 1;
-        int symbolsIndex = codewordLengthsLength;
         HuffNode leaf;
-        for (int i = 0; i < symbolsLength; i++) {
-            while (bytes[codewordLength - 1] == 0) {
-                codewordLength++;
+
+        if (codewordLengthsLength == 0) {
+            // special case when there are 256 symbols with codeword of length Byte.SIZE
+            for (int i = 0; i < symbolsLength; i++) {
+                leaf = new HuffNode(bytes[i]);
+                leaf.setCodeword(new BitSequence(Byte.SIZE));
+                leafNodes[i] = leaf;
             }
-            leaf = new HuffNode(bytes[symbolsIndex++]);
-            leaf.setCodeword(new BitSequence(codewordLength));
-            leafNodes[i] = leaf;
-            bytes[codewordLength - 1]--;
+        } else {
+
+            int symbolsIndex = codewordLengthsLength;
+            int codewordLength = 1;
+
+            for (int i = 0; i < symbolsLength; i++) {
+                // the count for each codeword length l is in bytes[l-1]
+                while (bytes[codewordLength - 1] == 0) {
+                    codewordLength++;
+                }
+
+                leaf = new HuffNode(bytes[symbolsIndex++]);
+                leaf.setCodeword(new BitSequence(codewordLength));
+                leafNodes[i] = leaf;
+                bytes[codewordLength - 1]--;
+            }
         }
+
         return leafNodes;
     }
 
     /**
+     * Returns the byte array used internally to store this tree representation.
      *
-     * @return
+     * @return Array used internally to store this tree representation.
      */
     public byte[] getBytes() {
         return bytes;
     }
 
     /**
+     * Returns the length (in bytes) of the first part of this tree
+     * representation, where the counts for each codeword length are stored.
      *
-     * @return
+     * @return Length (in bytes) of the first part of this tree representation,
+     * where the counts for each codeword length are stored.
      */
     public int getCodewordLengthsLength() {
         return codewordLengthsLength;
     }
 
     /**
-     * 
-     * @return
+     * Returns the total length (in bytes) of this tree representation.
+     *
+     * @return Total length (in bytes) of this tree representation (equal to
+     * {@link getBytes()}.length).
      */
     public int getTotalLength() {
-        return totalLength;
+        return bytes.length;
+    }
+
+    /**
+     * Returns a String representing this tree representation (for debugging
+     * purposes).
+     *
+     * @return A String representing this tree representation.
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        int i = 0;
+        while (i < codewordLengthsLength) {
+            sb.append(Byte.toUnsignedInt(bytes[i])).append(" of length ").append(++i).append("\n");
+        }
+        while (i < bytes.length) {
+            sb.append("symbol ").append(bytes[i++]).append("\n");
+        }
+        return sb.toString();
     }
 }
