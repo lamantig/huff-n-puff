@@ -7,6 +7,8 @@ import io.IO;
  */
 public class Compare extends BasicCommand {
 
+    public static final String KEY = "compare";
+
     /**
      * Creates an instance of Compare.
      *
@@ -14,5 +16,10 @@ public class Compare extends BasicCommand {
      */
     public Compare(IO io) {
         super(io, "compare the performance of different compression algorithms");
+    }
+
+    @Override
+    public String getKey() {
+        return KEY;
     }
 }

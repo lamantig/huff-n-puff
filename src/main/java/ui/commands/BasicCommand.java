@@ -18,6 +18,13 @@ public abstract class BasicCommand implements Command {
         this.description = description;
     }
 
+    /**
+     * Returns this command's key.
+     *
+     * @return This command's key.
+     */
+    public abstract String getKey();
+
     @Override
     public void execute() {
         io.println("this command hasn't been implemented yet\n");

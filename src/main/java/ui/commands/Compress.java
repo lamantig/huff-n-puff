@@ -9,6 +9,8 @@ import java.nio.file.Path;
  */
 public class Compress extends BasicCommand {
 
+    public static final String KEY = "compress";
+
     /**
      * Creates an instance of Compress.
      *
@@ -64,5 +66,10 @@ public class Compress extends BasicCommand {
         }
 
         return algorithm;
+    }
+
+    @Override
+    public String getKey() {
+        return KEY;
     }
 }

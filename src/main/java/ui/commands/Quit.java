@@ -7,6 +7,8 @@ import io.IO;
  */
 public class Quit extends BasicCommand {
 
+    public static final String KEY = "quit";
+
     /**
      * Creates an instance of Quit.
      *
@@ -19,5 +21,10 @@ public class Quit extends BasicCommand {
     @Override
     public void execute() {
         io.println("terminating program execution... seeya!");
+    }
+
+    @Override
+    public String getKey() {
+        return KEY;
     }
 }

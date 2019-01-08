@@ -1,10 +1,8 @@
 package ui;
 
 import io.IO;
-import java.util.HashMap;
-import java.util.Map;
+import ui.commands.BasicCommand;
 import ui.commands.Command;
-import ui.commands.CommandKey;
 import ui.commands.Compare;
 import ui.commands.Compress;
 import ui.commands.Decompress;
@@ -16,7 +14,11 @@ import ui.commands.Quit;
 public class TUI {
 
     private final IO io;
-    private final Map<String, Command> commands;
+    private final BasicCommand[] commands = new BasicCommand[4];
+    private final Compare compare;
+    private final Compress compress;
+    private final Decompress decompress;
+    private final Quit quit;
 
     /**
      * Creates an instance of TUI (textual user interface).
@@ -25,11 +27,15 @@ public class TUI {
      */
     public TUI(IO io) {
         this.io = io;
-        this.commands = new HashMap<>();
-        commands.put(CommandKey.COMPARE.getKey(), new Compare(io));
-        commands.put(CommandKey.COMPRESS.getKey(), new Compress(io));
-        commands.put(CommandKey.DECOMPRESS.getKey(), new Decompress(io));
-        commands.put(CommandKey.QUIT.getKey(), new Quit(io));
+        int i = -1;
+        compare = new Compare(io);
+        commands[++i] = compare;
+        compress = new Compress(io);
+        commands[++i] = compress;
+        decompress = new Decompress(io);
+        commands[++i] = decompress;
+        quit = new Quit(io);
+        commands[++i] = quit;
     }
 
     /**
@@ -45,16 +51,32 @@ public class TUI {
 
         do {
             io.println("supported commands:");
-            for (CommandKey commKey : CommandKey.values()) {
-                String key = commKey.getKey();
-                io.printf("\t%-15s%s\n", key, commands.get(key).toString());
+            for (BasicCommand c : commands) {
+                String key = c.getKey();
+                io.printf("\t%-15s%s\n", key, c.toString());
             }
 
             input = io.getInput().toLowerCase().trim();
 
-            command = commands.getOrDefault(input, unsupported);
+            switch (input) {
+                case Compare.KEY:
+                    command = compare;
+                    break;
+                case Compress.KEY:
+                    command = compress;
+                    break;
+                case Decompress.KEY:
+                    command = decompress;
+                    break;
+                case Quit.KEY:
+                    command = quit;
+                    break;
+                default:
+                    command = unsupported;
+            }
+
             command.execute();
 
-        } while (!input.equals(CommandKey.QUIT.getKey()));
+        } while (!input.equals(Quit.KEY));
     }
 }

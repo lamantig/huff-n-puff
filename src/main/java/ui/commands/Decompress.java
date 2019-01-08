@@ -9,6 +9,8 @@ import java.nio.file.Path;
  */
 public class Decompress extends BasicCommand {
 
+    public static final String KEY = "decompress";
+
     /**
      * Creates an instance of Decompress.
      *
@@ -91,5 +93,10 @@ public class Decompress extends BasicCommand {
         CommandUtilities.printAlgorithmsWithKeys(
                 CommandUtilities.ALGORITHMS_BY_EXTENSION, io);
         io.println("");
+    }
+
+    @Override
+    public String getKey() {
+        return KEY;
     }
 }
