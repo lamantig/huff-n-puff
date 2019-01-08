@@ -30,7 +30,7 @@ public class FileUtilities {
     }
 
     /**
-     * Writes data from a byte array into a file.
+     * Writes the whole content of a byte array into a file.
      *
      * @param path Path of the file to be written.
      * @param data A byte array containing the data to be written into the file.
@@ -46,12 +46,23 @@ public class FileUtilities {
         }
     }
 
+    /**
+     * Writes a selected portion of a byte array into a file.
+     *
+     * @param path Path of the file to be written.
+     * @param data A byte array containing the data to be written into the file.
+     * @param length Length (in bytes) of the data to be written starting from
+     * the beginning of the given byte array (so the portion of the data that
+     * will be written is data[i], with i ranging from 0 (inclusive) to length
+     * (exclusive).
+     * @return Success of the writing operation.
+     */
     public static boolean writeFile(Path path, byte[] data, int length) {
         try {
-            FileChannel channel = FileChannel.open(path,StandardOpenOption.WRITE,
+            FileChannel channel = FileChannel.open(path, StandardOpenOption.WRITE,
                     StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
             ByteBuffer buffer = ByteBuffer.wrap(data, 0, length);
-            while(buffer.hasRemaining()) {
+            while (buffer.hasRemaining()) {
                 channel.write(buffer);
             }
             return true;
