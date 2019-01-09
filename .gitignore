@@ -2,3 +2,4 @@
 build/
 /.nb-gradle/
 /nbproject/
+/test/test.txt.huff
