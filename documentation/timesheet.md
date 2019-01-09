@@ -1,6 +1,6 @@
 # timesheet
 
-Total time (hours:minutes): 78:50.
+Total time (hours:minutes): 106:15.
 
 ## week 1
 
@@ -39,7 +39,11 @@ Total time (hours:minutes): 78:50.
 
 |             date |  time | tasks    |
 | ---------------: | ----: | :------- |
-| **weekly total** | 00:00 | お疲れ様ぜぇ～！ |
+|       2019-01-06 |  3:40 | Huffman and BitSequence debugging |
+|       2019-01-07 |  8:00 | <span>Huffman and BitSequence debugging<br>BitSequence refactoring<br>BitSequenceTest<br>HuffmanTest<br>written some Javadoc</span> |
+|       2019-01-08 | 10:30 | <span>research (LZ77, LZ78, LZW)<br>handled special case in TreeRepresentation<br>refactored ui without Map and HashMap dependencies<br>merge sort implementation, removed Arrays.sort<br>written some Javadoc</span> |
+|       2019-01-09 |  5:15 | <span>week 4 report and timesheet<br>research (performance testing)<br>substituted Arrays.fill and System.arraycopy with own implementations<br>made some unit tests for Utils class<br>made test text file for HuffmanTest and pushed it to GitHub<br>updated software requirements specification<br>started software implementation documentation<br>started software test documentation<br>written some Javadoc</span> |
+| **weekly total** | 27:25 | お疲れ様ぜぇ～！ |
 
 ## week 5
 

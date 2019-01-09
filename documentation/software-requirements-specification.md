@@ -14,7 +14,8 @@ The app has a command line textual user interface. The app's input can be a file
 
 ## desired time and space complexities (including big-O analysis)
 
-At the moment I still haven't researched the algorithms enough to say what is their time and space complexity. Some more information can be found for example in this [Data Compression Techniques](https://www.cs.helsinki.fi/courses/582487/2015/K/K/1) course.
+According to the Wikipedia article on [Huffman coding](https://en.wikipedia.org/wiki/Huffman_coding), a Huffman tree can be built in O(n) time, with an algorithm that uses two queues and a list of symbols sorted by their weight. So, using merge sort to sort the symbols, the total time complexity for building the tree will be O(n log n) (because it's the time complexity of merge sort). Anyway this time complexity is not particularly interesting, because n is just the size of the original alphabet, which in most implementations, including mine, is always the same and very small (256, the number of possible values of an unsigned byte). In the case of these compression algorithm it's more interesting to look at compression ratios and compression/decompression times.
+Some more information can be found for example in this [Data Compression Techniques](https://www.cs.helsinki.fi/courses/582487/2015/K/K/1) course.
 
 ## sources
 
