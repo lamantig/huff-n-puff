@@ -73,6 +73,7 @@ public class TUI {
                     break;
                 default:
                     command = unsupported;
+                    break;
             }
 
             command.execute();
