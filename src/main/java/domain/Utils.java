@@ -34,7 +34,7 @@ public class Utils {
         }
 
         if (a != original) {
-           arrayCopy(a, 0, original, 0, n);
+            arrayCopy(a, 0, original, 0, n);
         }
     }
 

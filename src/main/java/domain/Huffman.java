@@ -1,9 +1,9 @@
 package domain;
 
+import io.FileUtils;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.file.Path;
-import java.util.Arrays;
 
 /**
  * A class with static methods for file compression/decompression using Huffman
@@ -36,7 +36,7 @@ public final class Huffman implements CompressionAlgorithm {
     @Override
     public long compressFile(Path originalFilePath) {
 
-        byte[] originalData = FileUtilities.readFile(originalFilePath);
+        byte[] originalData = FileUtils.readFile(originalFilePath);
         if (originalData == null) {
             return -1;
         }
@@ -47,7 +47,7 @@ public final class Huffman implements CompressionAlgorithm {
 
         Path compressedFilePath = originalFilePath.resolveSibling(
                 originalFilePath.getFileName() + COMPRESSED_FILE_EXTENSION);
-        if (!FileUtilities.writeFile(compressedFilePath,
+        if (!FileUtils.writeFile(compressedFilePath,
                 compressedData.getBits(), compressedData.getLengthInBytes())) {
             return -1;
         }
@@ -260,7 +260,7 @@ public final class Huffman implements CompressionAlgorithm {
     @Override
     public long decompressFile(Path compressedFilePath) {
 
-        byte[] compressedData = FileUtilities.readFile(compressedFilePath);
+        byte[] compressedData = FileUtils.readFile(compressedFilePath);
         if (compressedData == null) {
             return -1;
         }
@@ -269,9 +269,9 @@ public final class Huffman implements CompressionAlgorithm {
         byte[] originalData = decompressData(compressedData);
         long endingTime = System.nanoTime();
 
-        Path originalFilePath = FileUtilities.cutPathTail(
+        Path originalFilePath = FileUtils.cutPathTail(
                 compressedFilePath, COMPRESSED_FILE_EXTENSION.length());
-        if (!FileUtilities.writeFile(originalFilePath, originalData)) {
+        if (!FileUtils.writeFile(originalFilePath, originalData)) {
             return -1;
         }
 

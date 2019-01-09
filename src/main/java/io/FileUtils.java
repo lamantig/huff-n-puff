@@ -1,4 +1,4 @@
-package domain;
+package io;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -11,7 +11,7 @@ import java.nio.file.StandardOpenOption;
 /**
  * A utility class with File access methods.
  */
-public class FileUtilities {
+public class FileUtils {
 
     /**
      * Reads a file to a byte array.
