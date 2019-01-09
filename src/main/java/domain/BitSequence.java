@@ -229,7 +229,7 @@ public class BitSequence {
             if (!lastZeroFound) {
                 byte[] nextBits = new byte[length];
                 nextBits[0] = (byte) 0b10000000;
-                Arrays.fill(nextBits, 1, length, (byte) 0);
+                Utils.fill(nextBits, 1, length, (byte) 0);
                 return new BitSequence(nextBits, freeBits - 1);
             }
 
@@ -237,10 +237,10 @@ public class BitSequence {
         }
 
         byte[] nextBits = new byte[length];
-        System.arraycopy(bits, 0, nextBits, 0, index);
+        Utils.arrayCopy(bits, 0, nextBits, 0, index);
         nextBits[index] = byteWithLastZero;
         index++;
-        Arrays.fill(nextBits, index, length, (byte) 0);
+        Utils.fill(nextBits, index, length, (byte) 0);
         return new BitSequence(nextBits, freeBitsInLastUsedByte);
     }
 
@@ -348,17 +348,17 @@ public class BitSequence {
     }
 
     private void clearFreeBytes(int fromIndex) {
-        Arrays.fill(bits, fromIndex, bits.length, (byte) 0);
+        Utils.fill(bits, fromIndex, bits.length, (byte) 0);
     }
 
     private void expand(int newLength) {
         byte[] expandedBits = new byte[newLength];
-        System.arraycopy(bits, 0, expandedBits, 0, getLengthInBytes());
+        Utils.arrayCopy(bits, 0, expandedBits, 0, getLengthInBytes());
         bits = expandedBits;
     }
 
     private void copyWithoutShift(BitSequence otherBS, int thisLength, int otherBSLength) {
-        System.arraycopy(otherBS.bits, 0, bits, thisLength, otherBSLength);
+        Utils.arrayCopy(otherBS.bits, 0, bits, thisLength, otherBSLength);
         freeBits = otherBS.freeBits;
         writeIndex += otherBS.writeIndex;
     }

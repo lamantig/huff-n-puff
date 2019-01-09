@@ -74,7 +74,7 @@ public final class Huffman implements CompressionAlgorithm {
 
         computeCodewords(huffmanTree, new BitSequence());
 
-        Utils.mergesort(leafNodes, new HuffNode.ByCanonicalOrder());
+        Utils.mergeSort(leafNodes, new HuffNode.ByCanonicalOrder());
         convertToCanonical(leafNodes);
 
         return leafNodes;
@@ -105,9 +105,10 @@ public final class Huffman implements CompressionAlgorithm {
             }
         }
 
-        leafNodes = Arrays.copyOfRange(leafNodes, 0, nodesCount);
-        Utils.mergesort(leafNodes, new HuffNode.ByWeight());
-        return leafNodes;
+        HuffNode[] resizedLeafNodes = new HuffNode[nodesCount];
+        Utils.arrayCopy(leafNodes, 0, resizedLeafNodes, 0, nodesCount);
+        Utils.mergeSort(resizedLeafNodes, new HuffNode.ByWeight());
+        return resizedLeafNodes;
     }
 
     private static HuffNode linearTimeHuffman(HuffNode[] leafNodes) {
@@ -178,9 +179,9 @@ public final class Huffman implements CompressionAlgorithm {
         // is slow, maybe even three times as much memory or more)
         byte[] bits = new byte[dataOffset + data.length];
         byte[] dataLength = ByteBuffer.allocate(Integer.BYTES).order(BYTE_ORDER).putInt(data.length).array();
-        System.arraycopy(dataLength, 0, bits, 0, dataLength.length);
+        Utils.arrayCopy(dataLength, 0, bits, 0, dataLength.length);
         bits[OFFSET_CWLENGTHS_LENGTH] = (byte) treeRepresentation.getCodewordLengthsLength();
-        System.arraycopy(treeRepresentation.getBytes(), 0, bits, OFFSET_TREE, treeRepresentationLength);
+        Utils.arrayCopy(treeRepresentation.getBytes(), 0, bits, OFFSET_TREE, treeRepresentationLength);
         BitSequence compressedData = new BitSequence(bits, Byte.SIZE, dataOffset);
         for (byte b : data) {
             compressedData.append(huffmanCode[Byte.toUnsignedInt(b)]);

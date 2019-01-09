@@ -15,7 +15,7 @@ public class Utils {
      * @param original Array to be sorted.
      * @param comp Comparator used to get the ordering of the elements.
      */
-    public static <T> void mergesort(T[] original, Comparator<T> comp) {
+    public static <T> void mergeSort(T[] original, Comparator<T> comp) {
 
         int n = original.length;
         T[] a = original;
@@ -34,7 +34,7 @@ public class Utils {
         }
 
         if (a != original) {
-            System.arraycopy(a, 0, original, 0, n);
+           arrayCopy(a, 0, original, 0, n);
         }
     }
 
@@ -50,6 +50,63 @@ public class Utils {
             } else {
                 b[k] = a[j++];
             }
+        }
+    }
+
+    /**
+     * Copies data from an array to another one. It works like System.arraycopy
+     * (but more slowly), so for more details see that method's documentation.
+     *
+     * @param src Source array.
+     * @param srcPos Starting position in the source array.
+     * @param dest Destination array.
+     * @param destPos Starting position in the destination array.
+     * @param length Number of elements to be copied.
+     */
+    public static void arrayCopy(byte[] src, int srcPos, byte[] dest, int destPos, int length) {
+
+        int i = srcPos;
+        int j = destPos;
+        int limit = srcPos + length;
+
+        while (i < limit) {
+            dest[j++] = src[i++];
+        }
+    }
+
+    /**
+     * Copies data from an array to another one. It works like System.arraycopy
+     * (but more slowly), so for more details see that method's documentation.
+     *
+     * @param src Source array.
+     * @param srcPos Starting position in the source array.
+     * @param dest Destination array.
+     * @param destPos Starting position in the destination array.
+     * @param length Number of elements to be copied.
+     */
+    public static void arrayCopy(Object[] src, int srcPos, Object[] dest, int destPos, int length) {
+
+        int i = srcPos;
+        int j = destPos;
+        int limit = srcPos + length;
+
+        while (i < limit) {
+            dest[j++] = src[i++];
+        }
+    }
+
+    /**
+     * Fills the given range of the given array with the given value. It works
+     * like Arrays.fill.
+     *
+     * @param a Array to be filled.
+     * @param fromIndex Initial index of the range to be filled (inclusive).
+     * @param toIndex Final index of the range to be filled (exclusive).
+     * @param val Value that will be used to fill the array.
+     */
+    public static void fill(byte[]a, int fromIndex, int toIndex, byte val) {
+        for (int i = fromIndex; i < toIndex; i++) {
+            a[i] = val;
         }
     }
 }

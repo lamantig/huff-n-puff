@@ -95,7 +95,7 @@ public class TreeRepresentation {
 
         int totalLength = codewordLengthsLength + symbolsLength;
         bytes = new byte[totalLength];
-        System.arraycopy(compressedData, Huffman.OFFSET_TREE, bytes, 0, totalLength);
+        Utils.arrayCopy(compressedData, Huffman.OFFSET_TREE, bytes, 0, totalLength);
     }
 
     /**
