@@ -1,8 +1,5 @@
 package domain;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-
 /**
  * A class with static methods for file compression/decompression using Huffman
  * coding.
@@ -22,7 +19,6 @@ public final class Huffman extends CompressionAlgorithm {
     private static final int OFFSET_FREEBITS = OFFSET_CWLENGTHS_LENGTH + Byte.BYTES;
     // as unsigned byte (it's the same actually since max is 8)
     public static final int OFFSET_TREE = OFFSET_FREEBITS + Byte.BYTES;
-    private static final ByteOrder BYTE_ORDER = ByteOrder.BIG_ENDIAN;
 
     /**
      * Computes a canonical Huffman tree from the given data.
@@ -133,12 +129,12 @@ public final class Huffman extends CompressionAlgorithm {
      * - representation of the canonical Huffman tree;
      * - compressed representation of the original data.
      *
-     * @param data The data to be compressed.
+     * @param originalData The data to be compressed.
      * @return Compressed data.
      */
     @Override
-    protected BitSequence compressData(byte[] data) {
-        HuffNode[] leafNodes = computeCanonicalHuffmanTree(data);
+    protected BitSequence compressData(byte[] originalData) {
+        HuffNode[] leafNodes = computeCanonicalHuffmanTree(originalData);
         BitSequence[] huffmanCode = extractHuffmanCode(leafNodes);
         TreeRepresentation treeRepresentation = new TreeRepresentation(leafNodes);
         int treeRepresentationLength = treeRepresentation.getTotalLength();
@@ -147,13 +143,13 @@ public final class Huffman extends CompressionAlgorithm {
         // (and probably less memory use anyway, because avoids resizing big arrays
         // which would imply double memory use of one array, and if garbage collection
         // is slow, maybe even three times as much memory or more)
-        byte[] bits = new byte[dataOffset + data.length];
-        byte[] dataLength = ByteBuffer.allocate(Integer.BYTES).order(BYTE_ORDER).putInt(data.length).array();
-        Utils.arrayCopy(dataLength, 0, bits, 0, dataLength.length);
+        byte[] bits = new byte[dataOffset + originalData.length];
+        byte[] originalDataLength = Utils.toByteArray(originalData.length);
+        Utils.arrayCopy(originalDataLength, 0, bits, 0, originalDataLength.length);
         bits[OFFSET_CWLENGTHS_LENGTH] = (byte) treeRepresentation.getCodewordLengthsLength();
         Utils.arrayCopy(treeRepresentation.getBytes(), 0, bits, OFFSET_TREE, treeRepresentationLength);
         BitSequence compressedData = new BitSequence(bits, Byte.SIZE, dataOffset);
-        for (byte b : data) {
+        for (byte b : originalData) {
             compressedData.append(huffmanCode[Byte.toUnsignedInt(b)]);
         }
         bits = compressedData.getBits();
@@ -231,7 +227,7 @@ public final class Huffman extends CompressionAlgorithm {
      */
     @Override
     protected byte[] decompressData(byte[] compressedData) {
-        int originalDataLength = extractOriginalDataLength(compressedData);
+        int originalDataLength = Utils.extractInt(compressedData);
         TreeRepresentation treeRepresentation = new TreeRepresentation(compressedData);
         int freeBits = compressedData[OFFSET_FREEBITS];
         HuffNode huffmanTreeRoot = buildTreeFromRepresentation(treeRepresentation);
@@ -241,10 +237,6 @@ public final class Huffman extends CompressionAlgorithm {
         byte[] originalData = new byte[originalDataLength];
         parseData(huffmanTreeRoot, compressedDataBS, originalData);
         return originalData;
-    }
-
-    private static int extractOriginalDataLength(byte[] compressedData) {
-        return ByteBuffer.wrap(compressedData).order(BYTE_ORDER).getInt();
     }
 
     // this cwlengthsLentgh is actually only length of the first half of the treerepr

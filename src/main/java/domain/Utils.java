@@ -111,4 +111,36 @@ public class Utils {
             a[i] = val;
         }
     }
+
+    /**
+     * Converts an integer into a byte array; the integer's bytes are in
+     * big-endian order.
+     *
+     * @param k Integer to be converted.
+     * @return An array containing the given integer's bytes in big-endian
+     * order.
+     */
+    public static byte[] toByteArray(int k) {
+        byte[] bytes = new byte[Integer.BYTES];
+        for (int i = 0; i < Integer.BYTES; i++) {
+            bytes[Integer.BYTES - 1 - i] = (byte) (k >>> (i * Byte.SIZE));
+        }
+        return bytes;
+    }
+
+    /**
+     * Takes the first 4 bytes of a byte array and converts them to the
+     * corresponding integer; the bytes are interpreted in big-endian order.
+     *
+     * @param bytes Array from which the integer will be extracted.
+     * @return An integer corresponding to the first 4 bytes of the given array
+     * (in big-endian order).
+     */
+    public static int extractInt(byte[] bytes) {
+        int k = 0;
+        for (int i = 0; i < Integer.BYTES; i++) {
+            k |= Byte.toUnsignedInt(bytes[Integer.BYTES - 1 - i]) << (i * Byte.SIZE);
+        }
+        return k;
+    }
 }
