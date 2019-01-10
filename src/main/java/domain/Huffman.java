@@ -1,15 +1,13 @@
 package domain;
 
-import io.FileUtils;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.file.Path;
 
 /**
  * A class with static methods for file compression/decompression using Huffman
  * coding.
  */
-public final class Huffman implements CompressionAlgorithm {
+public final class Huffman extends CompressionAlgorithm {
 
     /**
      * The file extension used for files compressed using the
@@ -25,36 +23,6 @@ public final class Huffman implements CompressionAlgorithm {
     // as unsigned byte (it's the same actually since max is 8)
     public static final int OFFSET_TREE = OFFSET_FREEBITS + Byte.BYTES;
     private static final ByteOrder BYTE_ORDER = ByteOrder.BIG_ENDIAN;
-
-    /**
-     * Compresses the file at the given path, using Huffman coding.
-     *
-     * @param originalFilePath Path of the file to be compressed.
-     * @return Time elapsed during compression in nanoseconds (excluding file
-     * reading and writing operations), or a negative number if the compression
-     * operation failed.
-     */
-    @Override
-    public long compressFile(Path originalFilePath) {
-
-        byte[] originalData = FileUtils.readFile(originalFilePath);
-        if (originalData == null) {
-            return -1;
-        }
-
-        long startingTime = System.nanoTime();
-        BitSequence compressedData = compressData(originalData);
-        long endingTime = System.nanoTime();
-
-        Path compressedFilePath = originalFilePath.resolveSibling(
-                originalFilePath.getFileName() + COMPRESSED_FILE_EXTENSION);
-        if (!FileUtils.writeFile(compressedFilePath,
-                compressedData.getBits(), compressedData.getLengthInBytes())) {
-            return -1;
-        }
-
-        return endingTime - startingTime;
-    }
 
     /**
      * Computes a canonical Huffman tree from the given data.
@@ -168,7 +136,8 @@ public final class Huffman implements CompressionAlgorithm {
      * @param data The data to be compressed.
      * @return Compressed data.
      */
-    private static BitSequence compressData(byte[] data) {
+    @Override
+    protected BitSequence compressData(byte[] data) {
         HuffNode[] leafNodes = computeCanonicalHuffmanTree(data);
         BitSequence[] huffmanCode = extractHuffmanCode(leafNodes);
         TreeRepresentation treeRepresentation = new TreeRepresentation(leafNodes);
@@ -253,33 +222,6 @@ public final class Huffman implements CompressionAlgorithm {
     }
 
     /**
-     * Decompresses the file at the given path, using Huffman coding.
-     *
-     * @param compressedFilePath Path of the file to be decompressed.
-     * @return True if file decompression succeeds, false otherwise.
-     */
-    @Override
-    public long decompressFile(Path compressedFilePath) {
-
-        byte[] compressedData = FileUtils.readFile(compressedFilePath);
-        if (compressedData == null) {
-            return -1;
-        }
-
-        long startingTime = System.nanoTime();
-        byte[] originalData = decompressData(compressedData);
-        long endingTime = System.nanoTime();
-
-        Path originalFilePath = FileUtils.cutPathTail(
-                compressedFilePath, COMPRESSED_FILE_EXTENSION.length());
-        if (!FileUtils.writeFile(originalFilePath, originalData)) {
-            return -1;
-        }
-
-        return endingTime - startingTime;
-    }
-
-    /**
      * Decompresses the given compressed data by first building the canonical
      * Huffman tree that was used for compression (using its representation,
      * included in the compressed data) and then using it as decompression code.
@@ -287,7 +229,8 @@ public final class Huffman implements CompressionAlgorithm {
      * @param compressedData The compressed data to be decompressed.
      * @return The original, uncompressed data.
      */
-    private static byte[] decompressData(byte[] compressedData) {
+    @Override
+    protected byte[] decompressData(byte[] compressedData) {
         int originalDataLength = extractOriginalDataLength(compressedData);
         TreeRepresentation treeRepresentation = new TreeRepresentation(compressedData);
         int freeBits = compressedData[OFFSET_FREEBITS];

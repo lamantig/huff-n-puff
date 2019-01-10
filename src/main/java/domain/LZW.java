@@ -1,21 +1,19 @@
 package domain;
 
-import java.nio.file.Path;
-
-public class LZW implements CompressionAlgorithm {
+public class LZW extends CompressionAlgorithm {
 
     public static final String COMPRESSED_FILE_EXTENSION = ".lzw12";
     public static final String NAME = "lzw";
     public static final String DESCRIPTION = "Lempel–Ziv–Welch";
 
     @Override
-    public long compressFile(Path originalFilePath) {
-        return -1;
+    protected BitSequence compressData(byte[] originalData) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public long decompressFile(Path compressedFilePath) {
-        return -1;
+    protected byte[] decompressData(byte[] compressedData) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
