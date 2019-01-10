@@ -16,6 +16,7 @@ public final class Huffman implements CompressionAlgorithm {
      * {@link #compressFile(String) compressFile} method.
      */
     public static final String COMPRESSED_FILE_EXTENSION = ".huff";
+    public static final String NAME = "huffman";
     public static final String DESCRIPTION = "canonical Huffman coding";
     private static final int POSSIBLE_BYTE_VALUES_COUNT = Byte.MAX_VALUE + 1 - Byte.MIN_VALUE;
     public static final int OFFSET_CWLENGTHS_LENGTH = Integer.BYTES;
@@ -360,27 +361,18 @@ public final class Huffman implements CompressionAlgorithm {
         }
     }
 
-    /**
-     * Returns a description of the Huffman CompressionAlgorithm.
-     *
-     * @return Time elapsed during decompression in nanoseconds (excluding file
-     * reading and writing operations), or a negative number if the
-     * decompression operation failed.
-     */
-    @Override
-    public String getDescription() {
-        return DESCRIPTION;
-    }
-
-    /**
-     * Returns the file extension used by the Huffman CompressionAlgorithm (for
-     * compressed files).
-     *
-     * @return The file extension used by the Huffman CompressionAlgorithm (for
-     * compressed files).
-     */
     @Override
     public String getExtension() {
         return COMPRESSED_FILE_EXTENSION;
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public String getDescription() {
+        return DESCRIPTION;
     }
 }

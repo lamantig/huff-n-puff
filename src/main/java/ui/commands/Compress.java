@@ -26,7 +26,7 @@ public class Compress extends BasicCommand {
     @Override
     public void execute() {
 
-        Path originalFilePath = CommandUtilities.askForPath(io, "compressed");
+        Path originalFilePath = CommandUtils.askForPath(io, "compressed");
         if (originalFilePath == null) {
             return;
         }
@@ -52,14 +52,14 @@ public class Compress extends BasicCommand {
     private CompressionAlgorithm askForAlgorithm() {
 
         io.println("please enter the compression algorithm to be used" + CANCEL_PROMPT);
-        CommandUtilities.printAlgorithmsWithKeys(CommandUtilities.ALGORITHMS_BY_NAME, io);
+        CommandUtils.printAlgorithmsWithNames(io);
 
         String input = io.getInput().toLowerCase().trim();
         if (input.equals(CANCEL)) {
             return null;
         }
 
-        CompressionAlgorithm algorithm = CommandUtilities.ALGORITHMS_BY_NAME.get(input);
+        CompressionAlgorithm algorithm = CommandUtils.getAlgorithmByName(input);
         if (algorithm == null) {
             io.println("unsupported algorithm!\n");
             return askForAlgorithm();

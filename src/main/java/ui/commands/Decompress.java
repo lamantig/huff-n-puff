@@ -27,7 +27,7 @@ public class Decompress extends BasicCommand {
     @Override
     public void execute() {
 
-        Path compressedFilePath = CommandUtilities.askForPath(io, "decompressed");
+        Path compressedFilePath = CommandUtils.askForPath(io, "decompressed");
         if (compressedFilePath == null) {
             return;
         }
@@ -62,7 +62,7 @@ public class Decompress extends BasicCommand {
             return null;
         }
 
-        return CommandUtilities.ALGORITHMS_BY_EXTENSION.get(fileExtension);
+        return CommandUtils.getAlgorithmByExtension(fileExtension);
     }
 
     /**
@@ -90,8 +90,7 @@ public class Decompress extends BasicCommand {
         io.println("unfortunately we cannot decompress the file (or directory) "
                 + "corresponding to the path you just entered!\n"
                 + "we can decompress files with the following extensions:");
-        CommandUtilities.printAlgorithmsWithKeys(
-                CommandUtilities.ALGORITHMS_BY_EXTENSION, io);
+        CommandUtils.printAlgorithmsWithExtensions(io);
         io.println("");
     }
 

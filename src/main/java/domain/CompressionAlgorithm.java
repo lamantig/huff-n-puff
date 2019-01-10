@@ -25,13 +25,6 @@ public interface CompressionAlgorithm {
     public long decompressFile(Path compressedFilePath);
 
     /**
-     * Returns a description of the CompressionAlgorithm.
-     *
-     * @return The CompressionAlgorithm's description.
-     */
-    public String getDescription();
-
-    /**
      * Returns the file extension used by the CompressionAlgorithm (for
      * compressed files).
      *
@@ -39,4 +32,18 @@ public interface CompressionAlgorithm {
      * compressed files).
      */
     public String getExtension();
+
+    /**
+     * Returns a short name for the CompressionAlgorithm.
+     *
+     * @return A short name for the CompressionAlgorithm.
+     */
+    public String getName();
+
+    /**
+     * Returns a description of the CompressionAlgorithm.
+     *
+     * @return The CompressionAlgorithm's description.
+     */
+    public String getDescription();
 }
