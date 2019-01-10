@@ -1,7 +1,5 @@
 package domain;
 
-import java.util.Arrays;
-
 /**
  * Represents a sequence of bits of arbitrary length.
  */
