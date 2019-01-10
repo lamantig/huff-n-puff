@@ -16,7 +16,7 @@ public final class Huffman extends CompressionAlgorithm {
     public static final String COMPRESSED_FILE_EXTENSION = ".huff";
     public static final String NAME = "huffman";
     public static final String DESCRIPTION = "canonical Huffman coding";
-    private static final int POSSIBLE_BYTE_VALUES_COUNT = Byte.MAX_VALUE + 1 - Byte.MIN_VALUE;
+
     public static final int OFFSET_CWLENGTHS_LENGTH = Integer.BYTES;
     // as unsigned byte
     private static final int OFFSET_FREEBITS = OFFSET_CWLENGTHS_LENGTH + Byte.BYTES;
@@ -51,7 +51,7 @@ public final class Huffman extends CompressionAlgorithm {
 
     private static long[] countByteOccurrences(byte[] data) {
 
-        long[] byteCounts = new long[POSSIBLE_BYTE_VALUES_COUNT];
+        long[] byteCounts = new long[Utils.POSSIBLE_BYTE_VALUES_COUNT];
 
         for (byte byteValue : data) {
             // array indexes have to be positive, so we read the byte as unsigned
@@ -63,10 +63,10 @@ public final class Huffman extends CompressionAlgorithm {
 
     private static HuffNode[] sortedLeafNodes(long[] byteCounts) {
 
-        HuffNode[] leafNodes = new HuffNode[POSSIBLE_BYTE_VALUES_COUNT];
+        HuffNode[] leafNodes = new HuffNode[Utils.POSSIBLE_BYTE_VALUES_COUNT];
         int nodesCount = 0;
 
-        for (int byteValue = 0; byteValue < POSSIBLE_BYTE_VALUES_COUNT; byteValue++) {
+        for (int byteValue = 0; byteValue < Utils.POSSIBLE_BYTE_VALUES_COUNT; byteValue++) {
             long byteCount = byteCounts[byteValue];
             if (byteCount > 0) {
                 // the cast to byte is the reverse of Byte.toUnsignedInt(byteValue)
@@ -214,7 +214,7 @@ public final class Huffman extends CompressionAlgorithm {
     }
 
     private static BitSequence[] extractHuffmanCode(HuffNode[] leafNodes) {
-        BitSequence[] huffmanCode = new BitSequence[POSSIBLE_BYTE_VALUES_COUNT];
+        BitSequence[] huffmanCode = new BitSequence[Utils.POSSIBLE_BYTE_VALUES_COUNT];
         for (HuffNode leaf : leafNodes) {
             huffmanCode[Byte.toUnsignedInt(leaf.getSymbol())] = leaf.getCodeword();
         }

@@ -7,6 +7,8 @@ import java.util.Comparator;
  */
 public class Utils {
 
+    public static final int POSSIBLE_BYTE_VALUES_COUNT = Byte.MAX_VALUE + 1 - Byte.MIN_VALUE;
+
     /**
      * Merge sort implementation, adapted from Wikipedia
      * (https://en.wikipedia.org/wiki/Merge_sort).
