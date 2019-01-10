@@ -108,7 +108,7 @@ public class BitSequence {
      * @param freeBits Amount of free bits of byte bits[writeIndex]; it can have
      * values ranging from 0 to Byte.SIZE (both inclusive).
      * @param writeIndex Index of last byte of array bits (given as a parameter)
-     * containing bits of the bit sequence. I can have values ranging from 0
+     * containing bits of the bit sequence; it can have values ranging from 0
      * (inclusive) to bits.length (exclusive).
      */
     public BitSequence(byte[] bits, int freeBits, int writeIndex) {
