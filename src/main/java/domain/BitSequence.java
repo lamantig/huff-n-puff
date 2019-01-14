@@ -173,6 +173,13 @@ public class BitSequence {
         }
     }
 
+    // for LZW codewords (integers of bitLength 9~12)
+    public void append(int codeword, int bitLength) {
+        for (int i = bitLength; i > 0; i--) {
+            append((codeword << (Integer.SIZE - i)) < 0);
+        }
+    }
+
     /**
      * Returns the value of the bit at the reading position, and then increments
      * the reading position by one.
@@ -183,12 +190,27 @@ public class BitSequence {
 
         if (isLessThanWritePosition(readIndex, readOffset)) {
 
-            boolean bit = readBit(readIndex, readOffset);
+            boolean nextBit = readBit(readIndex, readOffset);
             incrementReadPosition();
-            return bit;
+            return nextBit;
         }
 
         return null;
+    }
+
+    public Integer readNextInt(int bitLength) {
+        if (absolutePosition(writeIndex, Byte.SIZE - freeBits)
+                < absolutePosition(readIndex, readOffset) + bitLength) {
+            return null;
+        }
+        int nextInt = 0;
+        for (int i = bitLength - 1; i >= 0; i--) {
+            if (readBit(readIndex, readOffset)) {
+                nextInt |= 1 << i;
+            }
+            incrementReadPosition();
+        }
+        return nextInt;
     }
 
     /**
@@ -421,6 +443,10 @@ public class BitSequence {
             readIndex++;
             readOffset = 0;
         }
+    }
+
+    private long absolutePosition(int index, int offset) {
+        return (long) Byte.SIZE * index + offset;
     }
 
     private boolean containsOnlyOnes(int index, int freeBits) {
