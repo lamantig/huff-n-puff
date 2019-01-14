@@ -232,10 +232,10 @@ public final class Huffman extends CompressionAlgorithm {
         int freeBits = compressedData[OFFSET_FREEBITS];
         HuffNode huffmanTreeRoot = buildTreeFromRepresentation(treeRepresentation);
         int dataOffset = OFFSET_TREE + treeRepresentation.getTotalLength();
-        BitSequence compressedDataBS = new BitSequence(compressedData, freeBits);
-        compressedDataBS.setReadPosition(dataOffset, 0);
+        BitSequence compressedBitSeq = new BitSequence(compressedData, freeBits);
+        compressedBitSeq.setReadPosition(dataOffset, 0);
         byte[] originalData = new byte[originalDataLength];
-        parseData(huffmanTreeRoot, compressedDataBS, originalData);
+        parseData(huffmanTreeRoot, compressedBitSeq, originalData);
         return originalData;
     }
 
