@@ -1,6 +1,6 @@
 # timesheet
 
-Total time (hours:minutes): 106:15.
+Total time (hours:minutes): 125:30.
 
 ## week 1
 
@@ -49,7 +49,11 @@ Total time (hours:minutes): 106:15.
 
 |             date |  time | tasks    |
 | ---------------: | ----: | :------- |
-| **weekly total** | 00:00 | お疲れ様ぜぇ～！ |
+|       2019-01-10 |  8:20 | <span>research (LZW)<br>new data structure classes for LZW<br>refactored CommandUtils (removed Map and HashMap dependencies)</span> |
+|       2019-01-11 |  3:05 | worked on LZW and related classes (ByteSequence, LZWSequence) |
+|       2019-01-13 |  2:15 | <span>LZW debugging<br>got rid of LZWSequence, made new methods in BitSequence instead</span> |
+|       2019-01-14 |  5:35 | <span>CompressionAlgorithmTest<br>tried (unsuccessfully) to make LZW version with variable-length codewords (9 to 12 bits)<br>research (LZW, variable-length codewords)<br>week 5 report and timesheet</span> |
+| **weekly total** | 19:15 | お疲れ様ぜぇ～！ |
 
 ## week 6
 
