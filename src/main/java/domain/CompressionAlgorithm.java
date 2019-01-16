@@ -32,9 +32,9 @@ public abstract class CompressionAlgorithm {
         }
 
         return endingTime - startingTime;
-    };
+    }
 
-    protected abstract BitSequence compressData(byte[] originalData);
+    public abstract BitSequence compressData(byte[] originalData);
 
     /**
      * Decompresses the file at the given path.
@@ -62,9 +62,9 @@ public abstract class CompressionAlgorithm {
         }
 
         return endingTime - startingTime;
-    };
+    }
 
-    protected abstract byte[] decompressData(byte[] compressedData);
+    public abstract byte[] decompressData(byte[] compressedData);
 
     /**
      * Returns the file extension used by the CompressionAlgorithm (for

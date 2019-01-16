@@ -15,7 +15,7 @@ public class LZW extends CompressionAlgorithm {
     private static final int OFFSET_DATA = OFFSET_FREEBITS + Byte.SIZE;
 
     @Override
-    protected BitSequence compressData(byte[] originalData) {
+    public BitSequence compressData(byte[] originalData) {
 
         Dictionary<ByteSequence, Integer> dict = new JavasDict<>();
         initializeDictionary(dict);
@@ -64,7 +64,7 @@ public class LZW extends CompressionAlgorithm {
     }
 
     @Override
-    protected byte[] decompressData(byte[] compressedData) {
+    public byte[] decompressData(byte[] compressedData) {
 
         int originalDataLength = Utils.extractInt(compressedData);
         byte[] originalData = new byte[originalDataLength];

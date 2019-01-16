@@ -133,7 +133,7 @@ public final class Huffman extends CompressionAlgorithm {
      * @return Compressed data.
      */
     @Override
-    protected BitSequence compressData(byte[] originalData) {
+    public BitSequence compressData(byte[] originalData) {
         HuffNode[] leafNodes = computeCanonicalHuffmanTree(originalData);
         BitSequence[] huffmanCode = extractHuffmanCode(leafNodes);
         TreeRepresentation treeRepresentation = new TreeRepresentation(leafNodes);
@@ -226,7 +226,7 @@ public final class Huffman extends CompressionAlgorithm {
      * @return The original, uncompressed data.
      */
     @Override
-    protected byte[] decompressData(byte[] compressedData) {
+    public byte[] decompressData(byte[] compressedData) {
         int originalDataLength = Utils.extractInt(compressedData);
         TreeRepresentation treeRepresentation = new TreeRepresentation(compressedData);
         int freeBits = compressedData[OFFSET_FREEBITS];
