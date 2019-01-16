@@ -21,9 +21,6 @@ public class Decompress extends BasicCommand {
                 + "(using the same algorithm that was used for compression)");
     }
 
-    /**
-     * Executes this Decompress Command.
-     */
     @Override
     public void execute() {
 

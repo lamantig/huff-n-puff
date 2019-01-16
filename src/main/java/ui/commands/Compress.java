@@ -20,9 +20,6 @@ public class Compress extends BasicCommand {
         super(io, "compress a file using an algorithm of your choice");
     }
 
-    /**
-     * Executes this Compress Command.
-     */
     @Override
     public void execute() {
 
