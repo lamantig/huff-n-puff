@@ -21,13 +21,13 @@ public abstract class CompressionAlgorithm {
         }
 
         long startingTime = System.nanoTime();
-        BitSequence compressedData = compressData(originalData);
+        BitSequence compressedDataBitSeq = compressData(originalData);
         long endingTime = System.nanoTime();
 
         Path compressedFilePath = originalFilePath.resolveSibling(
                 originalFilePath.getFileName() + getExtension());
-        if (!FileUtils.writeFile(compressedFilePath,
-                compressedData.getBits(), compressedData.getLengthInBytes())) {
+        if (!FileUtils.writeFile(compressedFilePath, compressedDataBitSeq.getBits(),
+                compressedDataBitSeq.getLengthInBytes())) {
             return -1;
         }
 

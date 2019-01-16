@@ -15,10 +15,12 @@ import static ui.commands.Command.CANCEL_PROMPT;
  */
 public final class CommandUtils {
 
-    private static final CompressionAlgorithm[] ALGORITHMS = new CompressionAlgorithm[]{
+    public static final CompressionAlgorithm[] ALGORITHMS = new CompressionAlgorithm[]{
         new Huffman(),
         new LZW()
     };
+
+    public static final String CHOICE_LIST_FORMAT = "\t%-15s%s\n";
 
     /**
      * Asks for a valid Path using the given IO.
@@ -56,7 +58,7 @@ public final class CommandUtils {
      */
     public static void printAlgorithmsWithNames(IO io) {
         for (CompressionAlgorithm a : ALGORITHMS) {
-            io.printf("\t%-15s%s\n", a.getName(), a.getDescription());
+            io.printf(CHOICE_LIST_FORMAT, a.getName(), a.getDescription());
         }
     }
 
@@ -68,7 +70,7 @@ public final class CommandUtils {
      */
     public static void printAlgorithmsWithExtensions(IO io) {
         for (CompressionAlgorithm a : ALGORITHMS) {
-            io.printf("\t%-15s%s\n", a.getExtension(), a.getDescription());
+            io.printf(CHOICE_LIST_FORMAT, a.getExtension(), a.getDescription());
         }
     }
 
