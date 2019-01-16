@@ -4,7 +4,7 @@ public class LZW extends CompressionAlgorithm {
 
     public static final String COMPRESSED_FILE_EXTENSION = ".lzw12";
     public static final String NAME = "lzw";
-    public static final String DESCRIPTION = "Lempel–Ziv–Welch";
+    public static final String DESCRIPTION = "Lempel-Ziv-Welch";
 
     public static final int HASH_TABLE_SIZE = 12289;
     public static final int HASH_FACTOR = 257;
