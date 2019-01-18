@@ -89,4 +89,13 @@ public class FileUtils {
         String cutPathString = pathString.substring(0, pathString.length() - tailLength);
         return Paths.get(cutPathString);
     }
+
+    public static Path[] getFilePaths(Path directoryPath) {
+        try {
+            return Files.walk(directoryPath).filter(Files::isRegularFile).toArray(Path[]::new);
+        } catch (IOException e) {
+            System.out.println(e);
+            return null;
+        }
+    }
 }

@@ -5,6 +5,7 @@ import domain.Huffman;
 import domain.LZW;
 import io.IO;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import static ui.commands.Command.CANCEL;
@@ -22,32 +23,76 @@ public final class CommandUtils {
 
     public static final String CHOICE_LIST_FORMAT = "\t%-15s%s\n";
 
-    /**
-     * Asks for a valid Path using the given IO.
-     *
-     * @param io IO used for communication.
-     * @param action String used to personalize the prompt with the action that
-     * will be performed by the calling method with the returned Path.
-     * @return A valid Path, or null if the operation was canceled by the user.
-     */
-    public static Path askForPath(IO io, String action) {
+    private static final String PATH_PROMPT = "please enter the path of the ",
+                                FILE_PATH_PROMPT = PATH_PROMPT + "file to be ",
+                                DIRECTORY_PATH_PROMPT = "directory to be ",
+                                WRONG_PATH = "the provided path does not point to a ";
 
-        io.println("please enter the path of the file to be " + action + CANCEL_PROMPT);
+    private static Path askForPath(IO io, String propmt) {
+
+        io.println(propmt + CANCEL_PROMPT);
 
         String input = io.getInput().trim();
         if (input.equals(CANCEL)) {
             return null;
         }
 
-        Path originalFilePath;
         try {
-            originalFilePath = Paths.get(input).toRealPath();
+            return Paths.get(input).toRealPath();
         } catch (IOException e) {
             io.println(e + "\ninvalid path!\n");
-            return askForPath(io, action);
+            return askForPath(io, propmt);
+        }
+    }
+
+    /**
+     * Using the given IO, asks for a valid path pointing to a file.
+     *
+     * @param io IO used for communication.
+     * @param action String used to personalize the prompt with the action that
+     * will be performed by the calling method with the returned path.
+     * @return A valid file path, or null if the operation was canceled by the
+     * user.
+     */
+    public static Path askForFilePath(IO io, String action) {
+
+        Path path = askForPath(io, FILE_PATH_PROMPT + action);
+
+        if (path == null) {
+            return null;
         }
 
-        return originalFilePath;
+        if (Files.isRegularFile(path)) {
+            return path;
+        } else {
+            io.println(WRONG_PATH + "file!\n");
+            return askForFilePath(io, action);
+        }
+    }
+
+    /**
+     * Using the given IO, asks for a valid path pointing to a directory.
+     *
+     * @param io IO used for communication.
+     * @param action String used to personalize the prompt with the action that
+     * will be performed by the calling method with the returned path.
+     * @return A valid directory path, or null if the operation was canceled by
+     * the user.
+     */
+    public static Path askForDirectoryPath(IO io, String action) {
+
+        Path path = askForPath(io, DIRECTORY_PATH_PROMPT + action);
+
+        if (path == null) {
+            return null;
+        }
+
+        if (Files.isDirectory(path)) {
+            return path;
+        } else {
+            io.println(WRONG_PATH + "directory!\n");
+            return askForDirectoryPath(io, action);
+        }
     }
 
     /**

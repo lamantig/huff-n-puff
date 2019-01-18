@@ -24,7 +24,7 @@ public class Decompress extends BasicCommand {
     @Override
     public void execute() {
 
-        Path compressedFilePath = CommandUtils.askForPath(io, "decompressed");
+        Path compressedFilePath = CommandUtils.askForFilePath(io, "decompressed");
         if (compressedFilePath == null) {
             return;
         }

@@ -23,7 +23,7 @@ public class Compress extends BasicCommand {
     @Override
     public void execute() {
 
-        Path originalFilePath = CommandUtils.askForPath(io, "compressed");
+        Path originalFilePath = CommandUtils.askForFilePath(io, "compressed");
         if (originalFilePath == null) {
             return;
         }
