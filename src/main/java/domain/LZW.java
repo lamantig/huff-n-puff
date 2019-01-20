@@ -17,7 +17,7 @@ public class LZW extends CompressionAlgorithm {
     @Override
     public BitSequence compressData(byte[] originalData) {
 
-        Dictionary<ByteSequence, Integer> dict = new JavasDict<>();
+        Dictionary<ByteSequence, Integer> dict = new LZWDictionary();
         initializeDictionary(dict);
         byte[] bytes = new byte[originalData.length];
         byte[] originalDataLength = Utils.toByteArray(originalData.length);
@@ -28,37 +28,38 @@ public class LZW extends CompressionAlgorithm {
         int newCodeword = Utils.POSSIBLE_BYTE_VALUES_COUNT;
         ByteSequence string = new ByteSequence();
         string.append(originalData[i]);
-        ByteSequence stringPlusNextSymbol;
+        ByteSequence nextString;
+        Integer codewordForString = dict.get(string);
         Integer codewordForNextString;
         byte symbol;
 
         while (++i < originalData.length) {
 
             symbol = originalData[i];
-            stringPlusNextSymbol = string.makeClone();
-            stringPlusNextSymbol.append(symbol);
-            codewordForNextString = dict.get(stringPlusNextSymbol);
+            nextString = string.makeClone();
+            nextString.append(symbol);
+            codewordForNextString = dict.get(nextString);
 
             if (codewordForNextString == null) {
-
-                compressedData.append(dict.get(string), CODEWORD_LENGTH);
-
+                compressedData.append(codewordForString, CODEWORD_LENGTH);
                 if (newCodeword == POSSIBLE_CW_VALUES_COUNT) {
                     dict.clear();
                     initializeDictionary(dict);
                     newCodeword = Utils.POSSIBLE_BYTE_VALUES_COUNT;
                 }
 
-                dict.put(stringPlusNextSymbol, newCodeword++);
+                dict.put(nextString, newCodeword++);
                 string.reset();
                 string.append(symbol);
+                codewordForString = dict.get(string);
 
             } else {
-                string = stringPlusNextSymbol;
+                codewordForString = codewordForNextString;
+                string = nextString;
             }
         }
 
-        compressedData.append(dict.get(string), CODEWORD_LENGTH);
+        compressedData.append(codewordForString, CODEWORD_LENGTH);
         compressedData.getBits()[OFFSET_FREEBITS] = (byte) compressedData.getFreeBits();
         return compressedData;
     }
