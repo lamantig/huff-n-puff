@@ -221,6 +221,7 @@ public class Compare extends BasicCommand {
         try {
             reps = Integer.parseInt(io.getInput().trim());
         } catch (NumberFormatException e) {
+            invalid = true;
         }
 
         if (invalid || reps < MIN_REPS) {
