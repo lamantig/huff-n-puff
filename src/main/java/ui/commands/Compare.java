@@ -111,14 +111,13 @@ public class Compare extends BasicCommand {
 
         Stats stats = new Stats();
 
-        long compressionStartingTime;
         BitSequence compressedDataBitSeq;
         int i = 0;
+        long compressionStartingTime = System.nanoTime();
         do {
-            compressionStartingTime = System.nanoTime();
             compressedDataBitSeq = algorithm.compressData(originalData);
-            stats.compressionElapsedTime += System.nanoTime() - compressionStartingTime;
         } while (++i < reps);
+        stats.compressionElapsedTime = System.nanoTime() - compressionStartingTime;
 
         Path compressedFilePath = originalFilePath.resolveSibling(
                 originalFilePath.getFileName() + algorithm.getExtension());
@@ -135,13 +134,12 @@ public class Compare extends BasicCommand {
             return null;
         }
 
-        long decompressionStartingTime;
         byte[] decompressedData;
+        long decompressionStartingTime = System.nanoTime();
         do {
-            decompressionStartingTime = System.nanoTime();
             decompressedData = algorithm.decompressData(compressedData);
-            stats.decompressionElapsedTime += System.nanoTime() - decompressionStartingTime;
         } while (--i > 0);
+        stats.decompressionElapsedTime = System.nanoTime() - decompressionStartingTime;
 
         if (!Utils.equals(originalData, decompressedData)) {
             io.println(FILE_COMP_DEC_E + originalFilePath + WITH + algorithm.getName() + "\n");
