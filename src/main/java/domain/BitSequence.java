@@ -175,8 +175,29 @@ public class BitSequence {
 
     // for LZW codewords (integers of bitLength 9~12)
     public void append(int codeword, int bitLength) {
-        for (int i = bitLength; i > 0; i--) {
-            append((codeword << (Integer.SIZE - i)) < 0);
+
+        if (bitLength < 1 || Integer.SIZE < bitLength) {
+            return;
+        }
+
+        int writeOffset = Byte.SIZE - freeBits;
+        if (absolutePosition(writeIndex, writeOffset) + bitLength > (long) Byte.SIZE * bits.length) {
+            expand(bits.length + Math.max(Integer.BYTES, SIZE_INCREMENT));
+        }
+
+        int bitsToCopy = bitLength;
+        int leftAlignedCW = codeword << (Integer.SIZE - bitsToCopy);
+        int shift = Integer.SIZE - Byte.SIZE + writeOffset;
+
+        bits[writeIndex] |= leftAlignedCW >>> shift;
+        for (bitsToCopy -= freeBits; bitsToCopy > 0; bitsToCopy -= Byte.SIZE) {
+            shift -= Byte.SIZE;
+            bits[++writeIndex] = (byte) (leftAlignedCW >>> shift);
+        }
+        
+        freeBits = -bitsToCopy;
+        if (freeBits == 0) {
+            incrementWriteIndex();
         }
     }
 
@@ -199,17 +220,38 @@ public class BitSequence {
     }
 
     public Integer readNextInt(int bitLength) {
+
         if (absolutePosition(writeIndex, Byte.SIZE - freeBits)
-                < absolutePosition(readIndex, readOffset) + bitLength) {
+                < absolutePosition(readIndex, readOffset) + bitLength
+                || bitLength < 1 || Integer.SIZE < bitLength) {
             return null;
         }
+
         int nextInt = 0;
-        for (int i = bitLength - 1; i >= 0; i--) {
-            if (readBit(readIndex, readOffset)) {
-                nextInt |= 1 << i;
-            }
-            incrementReadPosition();
+        int rightShift = Byte.SIZE - bitLength;
+        byte leftAlignedByte = (byte) (bits[readIndex] << readOffset);
+
+        if (rightShift < 0) {
+            nextInt = Byte.toUnsignedInt(leftAlignedByte) << -rightShift;
+            rightShift += Byte.SIZE - readOffset;
+            leftAlignedByte = bits[++readIndex];
         }
+
+        while (rightShift < 0) {
+            nextInt |= Byte.toUnsignedInt(leftAlignedByte) << -rightShift;
+            rightShift += Byte.SIZE;
+            leftAlignedByte = bits[++readIndex];
+        }
+
+        if (rightShift == 0) {
+            nextInt |= Byte.toUnsignedInt(leftAlignedByte);
+            readIndex++;
+            readOffset = 0;
+        } else {
+            nextInt |= Byte.toUnsignedInt(leftAlignedByte) >>> rightShift;
+            readOffset = Byte.SIZE - rightShift;
+        }
+
         return nextInt;
     }
 
