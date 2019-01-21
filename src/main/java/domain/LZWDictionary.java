@@ -15,6 +15,7 @@ public class LZWDictionary implements Dictionary<ByteSequence, Integer>  {
         for (int i = 0; i < hashTable.length; i++) {
             hashTable[i] = null;
         }
+        resetCachedHashCode();
     }
 
     @Override
