@@ -1,6 +1,6 @@
 # timesheet
 
-Total time (hours:minutes): 125:30.
+Total time (hours:minutes): 148:00.
 
 ## week 1
 
@@ -56,6 +56,18 @@ Total time (hours:minutes): 125:30.
 | **weekly total** | 19:15 | お疲れ様ぜぇ～！ |
 
 ## week 6
+
+|             date |  time | tasks    |
+| ---------------: | ----: | :------- |
+|       2019-01-15 |  1:20 | testing extreme cases of fixed-length LZW |
+|       2019-01-16 |  6:50 | <span>thinking about variable-length LZW dictionary reset<br>Compare Command: simple mode<br>Compare Command: thorough mode (for benchmarks)</span> |
+|       2019-01-18 |  3:55 | Compare Command: thorough mode and refactoring |
+|       2019-01-19 |  3:50 | BitSequence: faster append(int) and readNextInt |
+|       2019-01-20 |  2:40 | <span>BitSequence: faster readNextInt<br>LZWDictionary and LZWDictEntry<br>research (Java generic array creation and warnings)</span> |
+|       2019-01-21 |  3:55 | <span>LZWDictionaryTest and debugging<br>substituted LZWDictionary to JavasDict in LZW (slight improvement in speed!)<br>testing fixed-length LZW extreme case (long file whose bytes have all the same value)<br>week 6 report and timesheet</span> |
+| **weekly total** | 22:30 | お疲れ様ぜぇ～！ |
+
+## last week
 
 |             date |  time | tasks    |
 | ---------------: | ----: | :------- |
