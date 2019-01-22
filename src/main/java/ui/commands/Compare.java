@@ -1,12 +1,9 @@
 package ui.commands;
 
-import domain.BitSequence;
-import domain.CompressionAlgorithm;
-import domain.Utils;
+import benchmark.Stats;
 import io.FileUtils;
 import io.IO;
 import java.nio.file.Path;
-import java.util.stream.Stream;
 
 /**
  * A Command for comparing the performance of different compression algorithms.
@@ -15,7 +12,7 @@ public class Compare extends BasicCommand {
 
     public static final String KEY = "compare";
 
-    private static final String
+    public static final String
             COMPARE_ACTION = "used for comparing algorithms",
             SIMPLE = "simple",
             THOROUGH = "thorough",
@@ -33,16 +30,6 @@ public class Compare extends BasicCommand {
     private static final int
             DEFAULT_REPS = 13,
             MIN_REPS = 1;
-
-    private class Stats {
-        private long originalFileSize;
-        private long compressedFileSize;
-        private long compressionElapsedTime;
-        private long decompressionElapsedTime;
-        private double compressionRatio() {
-            return (double) originalFileSize / compressedFileSize;
-        }
-    }
 
     /**
      * Creates an instance of Compare.
@@ -95,8 +82,8 @@ public class Compare extends BasicCommand {
 
         Stats[] stats = new Stats[CommandUtils.ALGORITHMS.length];
         for (int i = 0; i < stats.length; i++) {
-            Stats s = computeStats(CommandUtils.ALGORITHMS[i],
-                    originalFilePath, originalData, 1);
+            Stats s = Stats.computeStats(CommandUtils.ALGORITHMS[i],
+                    originalFilePath, originalData, 1, io);
             if (s == null) {
                 return;
             }
@@ -104,52 +91,6 @@ public class Compare extends BasicCommand {
         }
 
         printStats(stats);
-    }
-
-    private Stats computeStats(CompressionAlgorithm algorithm,
-            Path originalFilePath, byte[] originalData, int reps) {
-
-        Stats stats = new Stats();
-
-        BitSequence compressedDataBitSeq;
-        int i = 0;
-        long compressionStartingTime = System.nanoTime();
-        do {
-            compressedDataBitSeq = algorithm.compressData(originalData);
-        } while (++i < reps);
-        stats.compressionElapsedTime = System.nanoTime() - compressionStartingTime;
-
-        Path compressedFilePath = originalFilePath.resolveSibling(
-                originalFilePath.getFileName() + algorithm.getExtension());
-
-        if (!FileUtils.writeFile(compressedFilePath, compressedDataBitSeq.getBits(),
-                compressedDataBitSeq.getLengthInBytes())) {
-            io.println(FILE_W_ERROR + compressedFilePath + "\n");
-            return null;
-        }
-
-        byte[] compressedData = FileUtils.readFile(compressedFilePath);
-        if (compressedData == null) {
-            io.println(FILE_R_ERROR + compressedFilePath + "\n");
-            return null;
-        }
-
-        byte[] decompressedData;
-        long decompressionStartingTime = System.nanoTime();
-        do {
-            decompressedData = algorithm.decompressData(compressedData);
-        } while (--i > 0);
-        stats.decompressionElapsedTime = System.nanoTime() - decompressionStartingTime;
-
-        if (!Utils.equals(originalData, decompressedData)) {
-            io.println(FILE_COMP_DEC_E + originalFilePath + WITH + algorithm.getName() + "\n");
-            return null;
-        }
-
-        stats.originalFileSize = decompressedData.length;
-        stats.compressedFileSize = compressedData.length;
-
-        return stats;
     }
 
     private void printStats(Stats[] stats) {
@@ -194,8 +135,8 @@ public class Compare extends BasicCommand {
 
             for (int i = 0; i < CommandUtils.ALGORITHMS.length; i++) {
 
-                Stats s = computeStats(CommandUtils.ALGORITHMS[i],
-                        originalFilePath, originalData, reps);
+                Stats s = Stats.computeStats(CommandUtils.ALGORITHMS[i],
+                        originalFilePath, originalData, reps, io);
                 if (s == null) {
                     return;
                 }
@@ -204,7 +145,7 @@ public class Compare extends BasicCommand {
             }
         }
 
-        Stats[] summaryStats = sumStats(stats);
+        Stats[] summaryStats = Stats.sumStats(stats);
 
         printStats(summaryStats);
     }
@@ -228,23 +169,6 @@ public class Compare extends BasicCommand {
         }
 
         return reps;
-    }
-
-    private Stats[] sumStats(Stats[][] stats) {
-
-        Stats[] summaryStats = new Stats[stats.length];
-        for (int i = 0; i < summaryStats.length; i++) {
-
-            summaryStats[i] = Stream.of(stats[i]).reduce(new Stats(), (s1, s2) -> {
-                s1.originalFileSize += s2.originalFileSize;
-                s1.compressedFileSize += s2.compressedFileSize;
-                s1.compressionElapsedTime += s2.compressionElapsedTime;
-                s1.decompressionElapsedTime += s2.decompressionElapsedTime;
-                return s1;
-            });
-        }
-
-        return summaryStats;
     }
 
     @Override
