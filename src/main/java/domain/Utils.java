@@ -125,21 +125,6 @@ public class Utils {
     }
 
     /**
-     * Fills the given range of the given array with the given value. It works
-     * like Arrays.fill.
-     *
-     * @param a Array to be filled.
-     * @param fromIndex Initial index of the range to be filled (inclusive).
-     * @param toIndex Final index of the range to be filled (exclusive).
-     * @param val Value that will be used to fill the array.
-     */
-    public static void fill(Object[]a, int fromIndex, int toIndex, Object val) {
-        for (int i = fromIndex; i < toIndex; i++) {
-            a[i] = val;
-        }
-    }
-
-    /**
      * Converts an integer into a byte array; the integer's bytes are in
      * big-endian order.
      *
