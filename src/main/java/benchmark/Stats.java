@@ -2,10 +2,10 @@ package benchmark;
 
 import domain.BitSequence;
 import domain.CompressionAlgorithm;
-import domain.Utils;
 import io.FileUtils;
 import io.IO;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.stream.Stream;
 import static ui.commands.Compare.FILE_COMP_DEC_E;
 import static ui.commands.Compare.FILE_R_ERROR;
@@ -58,7 +58,7 @@ public class Stats {
         } while (--i > 0);
         stats.decompressionElapsedTime = System.nanoTime() - decompressionStartingTime;
 
-        if (!Utils.equals(originalData, decompressedData)) {
+        if (!Arrays.equals(originalData, decompressedData)) {
             io.println(FILE_COMP_DEC_E + originalFilePath + WITH + algorithm.getName() + "\n");
             return null;
         }
