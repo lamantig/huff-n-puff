@@ -9,8 +9,10 @@ public class LZW extends CompressionAlgorithm {
     public static final int HASH_TABLE_SIZE = 12289;
     public static final int HASH_FACTOR = 257;
 
-    private static final int CODEWORD_LENGTH = 12;
-    private static final int POSSIBLE_CW_VALUES_COUNT = 1 << CODEWORD_LENGTH;
+    private static final int MIN_CW_LENGTH = 9;
+    private static final int MAX_CW_LENGTH = 12;
+    private static final int FIRST_LENGTH_THRESHOLD = 1 << MIN_CW_LENGTH;
+    private static final int POSSIBLE_CW_VALUES_COUNT = 1 << MAX_CW_LENGTH;
     private static final int OFFSET_FREEBITS = Integer.BYTES;
     private static final int OFFSET_DATA = OFFSET_FREEBITS + Byte.SIZE;
 
@@ -31,6 +33,8 @@ public class LZW extends CompressionAlgorithm {
         ByteSequence nextString;
         Integer codewordForString = dict.get(string);
         Integer codewordForNextString;
+        int codeWordLength = MIN_CW_LENGTH;
+        int lengthThreshold = FIRST_LENGTH_THRESHOLD;
         byte symbol;
 
         while (++i < originalData.length) {
@@ -41,11 +45,19 @@ public class LZW extends CompressionAlgorithm {
             codewordForNextString = dict.get(nextString);
 
             if (codewordForNextString == null) {
-                compressedData.append(codewordForString, CODEWORD_LENGTH);
-                if (newCodeword == POSSIBLE_CW_VALUES_COUNT) {
-                    dict.clear();
-                    initializeDictionary(dict);
-                    newCodeword = Utils.POSSIBLE_BYTE_VALUES_COUNT;
+
+                compressedData.append(codewordForString, codeWordLength);
+
+                if (newCodeword == lengthThreshold) {
+                    if (++codeWordLength > MAX_CW_LENGTH) {
+                        dict.clear();
+                        initializeDictionary(dict);
+                        newCodeword = Utils.POSSIBLE_BYTE_VALUES_COUNT;
+                        codeWordLength = MIN_CW_LENGTH;
+                        lengthThreshold = FIRST_LENGTH_THRESHOLD;
+                    } else {
+                        lengthThreshold <<= 1;
+                    }
                 }
 
                 dict.put(nextString, newCodeword++);
@@ -59,7 +71,7 @@ public class LZW extends CompressionAlgorithm {
             }
         }
 
-        compressedData.append(codewordForString, CODEWORD_LENGTH);
+        compressedData.append(codewordForString, codeWordLength);
         compressedData.getBits()[OFFSET_FREEBITS] = (byte) compressedData.getFreeBits();
         return compressedData;
     }
@@ -75,13 +87,15 @@ public class LZW extends CompressionAlgorithm {
 
         ByteSequence[] dict = new ByteSequence[POSSIBLE_CW_VALUES_COUNT];
         initializeDictionary(dict);
-        Integer codeword = compressedBitSeq.readNextInt(CODEWORD_LENGTH);
+        int codeWordLength = MIN_CW_LENGTH;
+        int lengthThreshold = FIRST_LENGTH_THRESHOLD;
+        Integer codeword = compressedBitSeq.readNextInt(codeWordLength);
         ByteSequence string = dict[codeword].makeClone();
         ByteSequence entry;
         int i = string.copyTo(originalData, 0);
         int newCodeword = Utils.POSSIBLE_BYTE_VALUES_COUNT;
 
-        while ((codeword = compressedBitSeq.readNextInt(CODEWORD_LENGTH)) != null) {
+        while ((codeword = compressedBitSeq.readNextInt(codeWordLength)) != null) {
 
             entry = dict[codeword];
 
@@ -93,12 +107,22 @@ public class LZW extends CompressionAlgorithm {
             i += entry.copyTo(originalData, i);
             string.append(entry.getFirst());
 
-            if (newCodeword == POSSIBLE_CW_VALUES_COUNT) {
-                reinitializeDictionary(dict);
-                newCodeword = Utils.POSSIBLE_BYTE_VALUES_COUNT;
+            if (newCodeword == lengthThreshold - 1) {
+
+                if (++codeWordLength > MAX_CW_LENGTH) {
+                    reinitializeDictionary(dict);
+                    newCodeword = Utils.POSSIBLE_BYTE_VALUES_COUNT;
+                    codeWordLength = MIN_CW_LENGTH;
+                    lengthThreshold = FIRST_LENGTH_THRESHOLD;
+                } else {
+                    lengthThreshold <<= 1;
+                    dict[newCodeword++] = string;
+                }
+
+            } else {
+                dict[newCodeword++] = string;
             }
 
-            dict[newCodeword++] = string;
             string = entry.makeClone();
         }
 
