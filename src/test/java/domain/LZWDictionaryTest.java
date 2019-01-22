@@ -8,14 +8,14 @@ public class LZWDictionaryTest {
 
     private Dictionary<ByteSequence, Integer> dict;
 
-    ByteSequence
+    private ByteSequence
             k1,
             k2,
             k3,
             k4,
             k5;
 
-    Integer v1,
+    private Integer v1,
             v2,
             v3,
             v4,
