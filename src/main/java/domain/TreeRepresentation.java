@@ -168,23 +168,4 @@ public class TreeRepresentation {
     public int getTotalLength() {
         return bytes.length;
     }
-
-    /**
-     * Returns a String representing this tree representation (for debugging
-     * purposes).
-     *
-     * @return A String representing this tree representation.
-     */
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        int i = 0;
-        while (i < codewordLengthsLength) {
-            sb.append(Byte.toUnsignedInt(bytes[i])).append(" of length ").append(++i).append("\n");
-        }
-        while (i < bytes.length) {
-            sb.append("symbol ").append(bytes[i++]).append("\n");
-        }
-        return sb.toString();
-    }
 }
