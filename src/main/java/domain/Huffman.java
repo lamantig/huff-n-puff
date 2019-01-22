@@ -164,10 +164,6 @@ public final class Huffman extends CompressionAlgorithm {
      */
     private static void computeCodewords(HuffNode node, BitSequence codeword) {
 
-        if (node == null || codeword == null) {
-            return;
-        }
-
         if (node.isLeaf()) {
             node.setCodeword(codeword);
             return;
