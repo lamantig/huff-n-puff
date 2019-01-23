@@ -36,7 +36,7 @@ public class Decompress extends BasicCommand {
             return;
         }
 
-        if (algorithm.decompressFile(compressedFilePath) >= 0) {
+        if (algorithm.decompressFile(compressedFilePath)) {
             io.println("file decompression completed successfully!\n");
         } else {
             io.println("ERROR! file decompression didn't complete\n");

@@ -33,7 +33,7 @@ public class Compress extends BasicCommand {
             return;
         }
 
-        if (algorithm.compressFile(originalFilePath) >= 0) {
+        if (algorithm.compressFile(originalFilePath)) {
             io.println("file compression completed successfully!\n");
         } else {
             io.println("ERROR! file compression didn't complete\n");

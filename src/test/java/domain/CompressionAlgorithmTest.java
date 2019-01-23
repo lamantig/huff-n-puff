@@ -69,13 +69,13 @@ public class CompressionAlgorithmTest {
     }
 
     @Test
-    public void compressFileReturnsNegativeValueWhenGivenNonexistentFilePath() {
-        assertTrue(new Huffman().compressFile(Paths.get(NONEXISTENT_FILE_PATH)) < 0);
+    public void compressFileReturnsFalseWhenGivenNonexistentFilePath() {
+        assertFalse(new Huffman().compressFile(Paths.get(NONEXISTENT_FILE_PATH)));
     }
 
     @Test
-    public void decompressFileReturnsNegativeValueWhenGivenNonexistentFilePath() {
-        assertTrue(new LZW().decompressFile(Paths.get(NONEXISTENT_FILE_PATH)) < 0);
+    public void decompressFileReturnsFalseWhenGivenNonexistentFilePath() {
+        assertFalse(new LZW().decompressFile(Paths.get(NONEXISTENT_FILE_PATH)));
     }
 
     private boolean decompressingCompressedFileRestoresItsOriginalContent(
