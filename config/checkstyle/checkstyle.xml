@@ -9,7 +9,7 @@
     <property name="localeLanguage" value="en"/>
 
     <module name="SuppressionFilter">
-        <property name="file" value="${config_loc}/suppressions.xml"/>
+        <property name="file" value="config/checkstyle/suppressions.xml"/>
     </module>
 
     <module name="TreeWalker">
