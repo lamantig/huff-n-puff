@@ -65,7 +65,7 @@ public class CompressionAlgorithmTest {
         byte[] originalData = new byte[length];
         Arrays.fill(originalData, 0, length, (byte) 19);
 
-        decompressingCompressedDataRestoresItsOriginalContent(new LZW(), originalData);
+        assertTrue(decompressingCompressedDataRestoresItsOriginalContent(new LZW(), originalData));
     }
 
     @Test
