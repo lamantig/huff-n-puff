@@ -46,7 +46,7 @@ public class ByteSequenceTest {
     public void makeCloneReturnsNewInstanceWhichIsEqualToTheOldOne() {
         bs1 = new ByteSequence(BYTES);
         bs2 = bs1.makeClone();
-        assertFalse(bs1 == bs2);
+        assertTrue(bs1 != bs2);
         assertEquals(bs1, bs2);
     }
 

@@ -1,14 +1,12 @@
 package domain;
 
 /**
- * SimpleQueue implementation that internally uses an array to store the
- * elements.
- *
- * @param <E> Type of the elements of the queue.
+ * SimpleQueue implementation for HuffNode elements that internally uses an
+ * array to store them.
  */
-public class ArrayQueue<E> implements SimpleQueue<E> {
+public class ArrayQueue implements SimpleQueue<HuffNode> {
 
-    private E[] elements;
+    private HuffNode[] elements;
     private int head;
     private int tail;
     private int size;
@@ -21,7 +19,7 @@ public class ArrayQueue<E> implements SimpleQueue<E> {
      * store the elements.
      */
     public ArrayQueue() {
-        elements = (E[]) new Object[INITIAL_ARRAY_SIZE];
+        elements = new HuffNode[INITIAL_ARRAY_SIZE];
         head = 0;
         tail = 0;
         size = 0;
@@ -36,7 +34,7 @@ public class ArrayQueue<E> implements SimpleQueue<E> {
      * fill the newly created ArrayQueue. It isn't copied, instead it's used
      * directly.
      */
-    public ArrayQueue(E[] elements) {
+    public ArrayQueue(HuffNode[] elements) {
         this.elements = elements;
         head = 0;
         tail = 0;
@@ -49,7 +47,7 @@ public class ArrayQueue<E> implements SimpleQueue<E> {
     }
 
     @Override
-    public boolean offer(E e) {
+    public boolean offer(HuffNode e) {
         if (isFull()) {
             expand();
         }
@@ -60,7 +58,7 @@ public class ArrayQueue<E> implements SimpleQueue<E> {
     }
 
     @Override
-    public E peek() {
+    public HuffNode peek() {
         if (isEmpty()) {
             return null;
         }
@@ -68,11 +66,11 @@ public class ArrayQueue<E> implements SimpleQueue<E> {
     }
 
     @Override
-    public E poll() {
+    public HuffNode poll() {
         if (isEmpty()) {
             return null;
         }
-        E e = elements[head++];
+        HuffNode e = elements[head++];
         head %= elements.length;
         size--;
         return e;
@@ -88,7 +86,7 @@ public class ArrayQueue<E> implements SimpleQueue<E> {
     }
 
     private void expand() {
-        E[] newValues = (E[]) new Object[elements.length * EXPANDING_FACTOR];
+        HuffNode[] newValues = new HuffNode[elements.length * EXPANDING_FACTOR];
         for (int i = 0; i < elements.length; i++) {
             newValues[i] = elements[head++];
             head %= elements.length;

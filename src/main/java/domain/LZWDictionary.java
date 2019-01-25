@@ -1,6 +1,6 @@
 package domain;
 
-public class LZWDictionary implements Dictionary<ByteSequence, Integer>  {
+public class LZWDictionary implements Dictionary {
 
     private final LZWDictEntry[] hashTable;
     private int cachedHashCode;

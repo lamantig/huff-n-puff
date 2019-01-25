@@ -13,16 +13,15 @@ public class Utils {
      * Merge sort implementation, adapted from Wikipedia
      * (https://en.wikipedia.org/wiki/Merge_sort).
      *
-     * @param <T> Type of the elements to be sorted.
      * @param original Array to be sorted.
      * @param comp Comparator used to get the ordering of the elements.
      */
-    public static <T> void mergeSort(T[] original, Comparator<T> comp) {
+    public static void mergeSort(HuffNode[] original, Comparator<HuffNode> comp) {
 
         int n = original.length;
-        T[] a = original;
-        T[] b = (T[]) new Object[n];
-        T[] temp;
+        HuffNode[] a = original;
+        HuffNode[] b = new HuffNode[n];
+        HuffNode[] temp;
 
         for (int width = 1; width < n; width *= 2) {
 
@@ -40,7 +39,8 @@ public class Utils {
         }
     }
 
-    private static <T> void merge(T[] a, int iLeft, int iRight, int iEnd, T[] b, Comparator<T> comp) {
+    private static void merge(HuffNode[] a, int iLeft, int iRight, int iEnd,
+            HuffNode[] b, Comparator<HuffNode> comp) {
 
         int i = iLeft;
         int j = iRight;

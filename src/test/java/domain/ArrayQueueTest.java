@@ -25,7 +25,7 @@ public class ArrayQueueTest {
 
     @Test
     public void isEmptyReturnsTrueWhenQueueIsEmptyAndFalseOtherwise() {
-        q = new ArrayQueue<>();
+        q = new ArrayQueue();
         HuffNode e = ELEM_1[0];
         assertTrue(q.isEmpty());
         assertTrue(q.offer(e));
@@ -36,7 +36,7 @@ public class ArrayQueueTest {
 
     @Test
     public void pollReturnsFirstElementRemovingItOrNullIFQueueIsEmpty() {
-        q = new ArrayQueue<>();
+        q = new ArrayQueue();
         assertNull(q.poll());
         for (HuffNode e : ELEM_2) {
             assertTrue(q.offer(e));
@@ -47,7 +47,7 @@ public class ArrayQueueTest {
     @Test
     public void offerExpandsInternalArrayWhenFull() {
         HuffNode[] elements = Arrays.copyOf(ELEM_1, ELEM_1.length);
-        q = new ArrayQueue<>(elements);
+        q = new ArrayQueue(elements);
         for (HuffNode e : ELEM_2) {
             assertTrue(q.offer(e));
         }
@@ -60,7 +60,7 @@ public class ArrayQueueTest {
 
     @Test
     public void peekReturnsFirstElementWithoutRemovingItOrNullIFQueueIsEmpty() {
-        q = new ArrayQueue<>();
+        q = new ArrayQueue();
         assertNull(q.peek());
         for (HuffNode e : ELEM_1) {
             assertTrue(q.offer(e));
@@ -77,7 +77,7 @@ public class ArrayQueueTest {
 
     @Test
     public void sizeReturnsQueueSize() {
-        q = new ArrayQueue<>();
+        q = new ArrayQueue();
         assertEquals(0, q.size());
         int elementCount = R.nextInt(ELEM_1.length);
         for (int i = 0; i < elementCount; i++) {

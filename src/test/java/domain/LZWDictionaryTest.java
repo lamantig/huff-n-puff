@@ -6,7 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 
 public class LZWDictionaryTest {
 
-    private Dictionary<ByteSequence, Integer> dict;
+    private Dictionary dict;
 
     private ByteSequence
             k1,

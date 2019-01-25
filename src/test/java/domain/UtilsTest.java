@@ -22,18 +22,20 @@ public class UtilsTest {
     private final Random r = new Random();
 
     @Test
-    public void mergeSortSortsIntegerArraysCorrectly() {
+    public void mergeSortSortsHuffNodeArraysCorrectly() {
 
         for (int length : ARRAY_LENGTHS) {
 
-            Integer[] a = new Integer[length];
-            Integer[] b = new Integer[length];
+            HuffNode[] a = new HuffNode[length];
+            HuffNode[] b = new HuffNode[length];
 
-            fillWithRandomNonZeroData(a, UPPER_BOUND);
+            for (int i = 0; i < length; i++) {
+                a[i] = new HuffNode(Byte.MIN_VALUE, r.nextInt(UPPER_BOUND));
+            }
             System.arraycopy(a, 0, b, 0, length);
 
-            Arrays.sort(a);
-            Utils.mergeSort(b, (e1, e2) -> Integer.compare(e1, e2));
+            Arrays.sort(a, new HuffNode.ByWeight());
+            Utils.mergeSort(b, new HuffNode.ByWeight());
 
             assertArrayEquals(a, b);
         }

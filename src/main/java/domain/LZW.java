@@ -11,7 +11,7 @@ public class LZW extends CompressionAlgorithm {
     public static final String COMPRESSED_FILE_EXTENSION = ".lzw" + MAX_CW_LENGTH;
     public static final String NAME = "lzw";
     public static final String DESCRIPTION = "Lempel-Ziv-Welch";
-    
+
     private static final int FIRST_LENGTH_THRESHOLD = 1 << MIN_CW_LENGTH;
     private static final int POSSIBLE_CW_VALUES_COUNT = 1 << MAX_CW_LENGTH;
     private static final int OFFSET_FREEBITS = Integer.BYTES;
@@ -20,7 +20,7 @@ public class LZW extends CompressionAlgorithm {
     @Override
     public BitSequence compressData(byte[] originalData) {
 
-        Dictionary<ByteSequence, Integer> dict = new LZWDictionary();
+        Dictionary dict = new LZWDictionary();
         initializeDictionary(dict);
         byte[] bytes = new byte[originalData.length];
         byte[] originalDataLength = Utils.toByteArray(originalData.length);

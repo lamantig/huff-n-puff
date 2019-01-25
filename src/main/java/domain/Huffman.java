@@ -78,8 +78,8 @@ public final class Huffman extends CompressionAlgorithm {
 
     private static HuffNode linearTimeHuffman(HuffNode[] leafNodes) {
 
-        SimpleQueue<HuffNode> q1 = new ArrayQueue<>(leafNodes);
-        SimpleQueue<HuffNode> q2 = new ArrayQueue<>();
+        SimpleQueue<HuffNode> q1 = new ArrayQueue(leafNodes);
+        SimpleQueue<HuffNode> q2 = new ArrayQueue();
 
         HuffNode leftChild,
                  rightChild;
