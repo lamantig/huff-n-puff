@@ -359,6 +359,38 @@ public class BitSequenceTest {
         assertThrows(IllegalArgumentException.class, () -> new BitSequence(bits1, 3, bits1.length + 71));
     }
 
+    @Test
+    public void appendIntAppendsCorrectValueAndCorrectNumberOfBits() {
+
+        bitSeq = new BitSequence();
+        String bitSeqString = "";
+
+        int[] toBeAppended = {91, 1999, 1, 129214151, 3, 9, 27, 1999327};
+        int[] leadingZeroes = {0, 2, 5};
+
+        bitSeqString = appendIntegersToStringAndBitSeq(bitSeqString, bitSeq, toBeAppended, leadingZeroes);
+        assertEquals(bitSeqString, bitSeq.toString());
+    }
+
+    @Test
+    public void readNextIntReadsCorrectValueAndCorrectNumberOfBits() {
+
+        bitSeq = new BitSequence();
+        String bitSeqString = "";
+
+        int[] toBeAppended = {833, 270, 259918547, 556711, 8771};
+        int[] leadingZeroes = {0, 1, 4};
+
+        bitSeqString = appendIntegersToStringAndBitSeq(bitSeqString, bitSeq, toBeAppended, leadingZeroes);
+        assertEquals(bitSeqString, bitSeq.toString());
+
+        for (int a : toBeAppended) {
+            for (int lz : leadingZeroes) {
+                assertEquals(a, (int) bitSeq.readNextInt(lz + Integer.toBinaryString(a).length()));
+            }
+        }
+    }
+
     private void appendBitsFromString(BitSequence bitSeq, String bitsString, int strLen) {
         for (int i = 0; i < strLen; i++) {
             if (bitsString.charAt(i) == '0') {
@@ -367,5 +399,26 @@ public class BitSequenceTest {
                 bitSeq.append(true);
             }
         }
+    }
+
+    private String appendIntegersToStringAndBitSeq(String bitSeqString,
+            BitSequence bitSeq, int[] toBeAppended, int[] leadingZeroes) {
+
+        char[] zeroes;
+        String tbaStr;
+
+        for (int tba : toBeAppended) {
+            for (int lzs : leadingZeroes) {
+
+                zeroes = new char[lzs];
+                Arrays.fill(zeroes, '0');
+                tbaStr = new String(zeroes) + Integer.toBinaryString(tba);
+
+                bitSeqString += tbaStr;
+                bitSeq.append(tba, tbaStr.length());
+            }
+        }
+
+        return bitSeqString;
     }
 }
