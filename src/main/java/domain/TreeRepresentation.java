@@ -121,18 +121,22 @@ public class TreeRepresentation {
         } else {
 
             int symbolsIndex = codewordLengthsLength;
+            int leafNodesIndex = 0;
             int codewordLength = 1;
 
-            for (int i = 0; i < symbolsLength; i++) {
+            while (leafNodesIndex < symbolsLength) {
                 // the count for each codeword length l is in bytes[l-1]
                 while (bytes[codewordLength - 1] == 0) {
                     codewordLength++;
                 }
 
-                leaf = new HuffNode(bytes[symbolsIndex++]);
-                leaf.setCodeword(new BitSequence(codewordLength));
-                leafNodes[i] = leaf;
-                bytes[codewordLength - 1]--;
+                for (int i = Byte.toUnsignedInt(bytes[codewordLength - 1]); i > 0; i--) {
+                    leaf = new HuffNode(bytes[symbolsIndex++]);
+                    leaf.setCodeword(new BitSequence(codewordLength));
+                    leafNodes[leafNodesIndex++] = leaf;
+                }
+
+                codewordLength++;
             }
         }
 
