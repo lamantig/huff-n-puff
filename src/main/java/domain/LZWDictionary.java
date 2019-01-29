@@ -23,8 +23,8 @@ public class LZWDictionary implements Dictionary {
         if (cachedHashCode < 0) {
             cachedHashCode = key.hashCode();
         } else {
-            cachedHashCode = (cachedHashCode * LZW.HASH_FACTOR
-                    + Byte.toUnsignedInt(key.getLast())) % LZW.HASH_TABLE_SIZE;
+            cachedHashCode = (int) (((long) cachedHashCode * LZW.HASH_FACTOR
+                    + Byte.toUnsignedInt(key.getLast())) % LZW.HASH_TABLE_SIZE);
         }
         LZWDictEntry entry = hashTable[cachedHashCode];
         while (entry != null) {

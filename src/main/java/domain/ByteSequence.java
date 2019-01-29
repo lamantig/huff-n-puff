@@ -52,11 +52,11 @@ public class ByteSequence {
 
     @Override
     public int hashCode() {
-        int hash = 0;
+        long hash = 0;
         for (int i = 0; i < length; i++) {
             hash = (hash * LZW.HASH_FACTOR + Byte.toUnsignedInt(bytes[i])) % LZW.HASH_TABLE_SIZE;
         }
-        return hash;
+        return (int) hash;
     }
 
     @Override
