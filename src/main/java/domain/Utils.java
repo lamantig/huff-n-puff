@@ -129,16 +129,19 @@ public class Utils {
     }
 
     /**
-     * Takes the first 4 bytes of a byte array and converts them to the
-     * corresponding integer; the bytes are interpreted in big-endian order.
+     * Takes 4 bytes of a byte array, starting from a given index, and converts
+     * them to the corresponding integer; the bytes are interpreted in
+     * big-endian order.
      *
      * @param bytes Array from which the integer will be extracted.
-     * @return An integer corresponding to the first 4 bytes of the given array
-     * (in big-endian order).
+     * @param fromIndex The index corresponding to the first of the 4 bytes that
+     * will be used to form an integer.
+     * @return An integer corresponding to the first 4 bytes (in big-endian
+     * order) from the given index of the given array.
      */
-    public static int extractInt(byte[] bytes) {
+    public static int extractInt(byte[] bytes, int fromIndex) {
         int k = 0;
-        for (int i = 0; i < Integer.BYTES; i++) {
+        for (int i = fromIndex; i < Integer.BYTES; i++) {
             k |= Byte.toUnsignedInt(bytes[Integer.BYTES - 1 - i]) << (i * Byte.SIZE);
         }
         return k;

@@ -1,24 +1,96 @@
 package domain;
 
 /**
- * A class with static methods for file compression/decompression using Huffman
+ * A class with static methods for data compression/decompression using Huffman
  * coding.
  */
 public final class Huffman extends CompressionAlgorithm {
 
     /**
-     * The file extension used for files compressed using the
-     * {@link #compressFile(String) compressFile} method.
+     * The file extension used for files compressed using this class.
      */
     public static final String COMPRESSED_FILE_EXTENSION = ".huff";
+    /**
+     * Short name for this algorithm (used in TUI).
+     */
     public static final String NAME = "huffman";
+    /**
+     * Longer name for this algorithm (used in TUI).
+     */
     public static final String DESCRIPTION = "canonical Huffman coding";
 
-    public static final int OFFSET_CWLENGTHS_LENGTH = Integer.BYTES;
-    // as unsigned byte
+    /**
+     * Offset (in bytes) from the beginning of compressed files, indicating
+     * where the length of the original data (in bytes) will be written.
+     */
+    public static final int OFFSET_ORIG_DATA_LENGTH = 0;
+    /**
+     * Offset (in bytes) from the beginning of compressed files, indicating
+     * where the value of codewordLenghtsLength (needed in TreeRepresentation)
+     * will be written.
+     */
+    public static final int OFFSET_CWLENGTHS_LENGTH = OFFSET_ORIG_DATA_LENGTH + Integer.BYTES;
+    /**
+     * Offset (in bytes) from the beginning of compressed files, indicating
+     * where the value of freeBits (unused bits in the last byte of the
+     * compressed file, see the BitSequence class) will be written.
+     */
     private static final int OFFSET_FREEBITS = OFFSET_CWLENGTHS_LENGTH + Byte.BYTES;
-    // as unsigned byte (it's the same actually since max is 8)
+    /**
+     * Offset (in bytes) from the beginning of compressed files, indicating
+     * where the TreeRepresentation of the Huffman tree used for compression
+     * will be written.
+     */
     public static final int OFFSET_TREE = OFFSET_FREEBITS + Byte.BYTES;
+
+    /**
+     * Compresses the given data by first computing a canonical Huffman code,
+     * and then using it as compression code. The compressed data will include
+     * (in this order):
+     * - int: length (in bytes) of the original (uncompressed) file;
+     * - unsigned byte: length (in bytes) of the first part (codewordLengths) of
+     * the representation of the canonical Huffman tree used for compression
+     * (the total length of the tree representation can be calculated from this,
+     * see {@link TreeRepresentation#this});
+     * - unsigned byte: unused bits in the last byte of the compressed data
+     * (freeBits variable of the BitSequence class);
+     * - representation of the canonical Huffman tree;
+     * - compressed representation of the original data.
+     *
+     * @param originalData The data to be compressed.
+     * @return A bit sequence corresponding to the compressed data.
+     */
+    @Override
+    public BitSequence compressData(byte[] originalData) {
+
+        HuffNode[] leafNodes = computeCanonicalHuffmanTree(originalData);
+
+        BitSequence[] huffmanCode = extractHuffmanCode(leafNodes);
+
+        TreeRepresentation treeRepresentation = new TreeRepresentation(leafNodes);
+
+        int treeRepresentationLength = treeRepresentation.getTotalLength();
+        int dataOffset = OFFSET_TREE + treeRepresentationLength;
+        // probably larger than needed (avoids switching to a larger array later on)
+        byte[] bits = new byte[dataOffset + originalData.length];
+
+        byte[] originalDataLength = Utils.toByteArray(originalData.length);
+        Utils.arrayCopy(originalDataLength, 0,
+                bits, OFFSET_ORIG_DATA_LENGTH, originalDataLength.length);
+        bits[OFFSET_CWLENGTHS_LENGTH] = (byte) treeRepresentation.getCodewordLengthsLength();
+        Utils.arrayCopy(treeRepresentation.getBytes(), 0,
+                bits, OFFSET_TREE, treeRepresentationLength);
+
+        BitSequence compressedData = new BitSequence(bits, Byte.SIZE, dataOffset);
+        for (byte b : originalData) {
+            compressedData.append(huffmanCode[Byte.toUnsignedInt(b)]);
+        }
+
+        bits = compressedData.getBits();
+        bits[OFFSET_FREEBITS] = (byte) compressedData.getFreeBits();
+
+        return compressedData;
+    }
 
     /**
      * Computes a canonical Huffman tree from the given data.
@@ -29,10 +101,8 @@ public final class Huffman extends CompressionAlgorithm {
      */
     private static HuffNode[] computeCanonicalHuffmanTree(byte[] data) {
 
-        // an array containing occurrence counts for each possible byte value
         long[] byteCounts = countByteOccurrences(data);
 
-        // an array with all the leaf nodes, sorted by weight
         HuffNode[] leafNodes = sortedLeafNodes(byteCounts);
 
         HuffNode huffmanTree = linearTimeHuffman(leafNodes);
@@ -45,27 +115,40 @@ public final class Huffman extends CompressionAlgorithm {
         return leafNodes;
     }
 
+    /**
+     * Counts how many times each possible byte value occurs in the given data.
+     *
+     * @param data The data from which byte values occurrences will be counted.
+     * @return An array containing occurrence counts for each possible byte
+     * value; the count for a given byte value can be found using its unsigned
+     * value as an index.
+     */
     private static long[] countByteOccurrences(byte[] data) {
 
         long[] byteCounts = new long[Utils.POSSIBLE_BYTE_VALUES_COUNT];
 
         for (byte byteValue : data) {
-            // array indexes have to be positive, so we read the byte as unsigned
             byteCounts[Byte.toUnsignedInt(byteValue)]++;
         }
 
         return byteCounts;
     }
 
-    private static HuffNode[] sortedLeafNodes(long[] byteCounts) {
+    /**
+     * Returns an array containing all the leaf nodes (sorted by weight) of the
+     * Huffman tree under construction.
+     *
+     * @param weights Contains the weight of each possible byte value.
+     * @return Leaf nodes, sorted by weight.
+     */
+    private static HuffNode[] sortedLeafNodes(long[] weights) {
 
         HuffNode[] leafNodes = new HuffNode[Utils.POSSIBLE_BYTE_VALUES_COUNT];
         int nodesCount = 0;
 
         for (int byteValue = 0; byteValue < Utils.POSSIBLE_BYTE_VALUES_COUNT; byteValue++) {
-            long byteCount = byteCounts[byteValue];
+            long byteCount = weights[byteValue];
             if (byteCount > 0) {
-                // the cast to byte is the reverse of Byte.toUnsignedInt(byteValue)
                 leafNodes[nodesCount++] = new HuffNode((byte) byteValue, byteCount);
             }
         }
@@ -76,6 +159,16 @@ public final class Huffman extends CompressionAlgorithm {
         return resizedLeafNodes;
     }
 
+    /**
+     * Builds a Huffman tree, using a known linear time algorithm (time
+     * complexity O(n)) which uses two queues and takes as input the leaf nodes
+     * sorted by weight (for more info see
+     * https://en.wikipedia.org/wiki/Huffman_coding#Compression).
+     *
+     * @param leafNodes All the leaf nodes of the tree under construction,
+     * sorted by weight.
+     * @return The root of the built tree.
+     */
     private static HuffNode linearTimeHuffman(HuffNode[] leafNodes) {
 
         SimpleQueue<HuffNode> q1 = new ArrayQueue(leafNodes);
@@ -85,9 +178,7 @@ public final class Huffman extends CompressionAlgorithm {
                  rightChild;
 
         while (!q1.isEmpty() || q2.size() > 1) {
-            /* break ties between queues by choosing the item in the first queue,
-            to minimize the variance of codeword length
-            (see https://en.wikipedia.org/wiki/Huffman_coding#Compression ) */
+
             leftChild = chooseNodeFromQueues(q1, q2);
             rightChild = chooseNodeFromQueues(q1, q2);
 
@@ -98,69 +189,40 @@ public final class Huffman extends CompressionAlgorithm {
     }
 
     /**
-     * Please note, at least one Queue must be not empty. Also ties break in favor of the first queue.
-     * @param q1
-     * @param q2
-     * @return
+     * Choose the HuffNode with the lowest weight between from the heads of the
+     * given queues. Please note: at least one queue must be not empty. Ties
+     * break in favor of the first queue, to minimize the variance of codeword
+     * length (see https://en.wikipedia.org/wiki/Huffman_coding#Compression).
+     *
+     * @param q1 The first queue (ties break in favor of this queue); at least
+     * one of the two queues must be not empty.
+     * @param q2 The second queue (ties break in favor of the other queue); at
+     * least one of the two queues must be not empty.
+     * @return The queue head with lowest weight.
      */
     private static HuffNode chooseNodeFromQueues(SimpleQueue<HuffNode> q1, SimpleQueue<HuffNode> q2) {
+
         HuffNode q1Head = q1.peek();
         HuffNode q2Head = q2.peek();
-        HuffNode chosen;
+
         if (q1Head == null) {
-            chosen = q2.poll();
+            return q2.poll();
         } else if (q2Head == null) {
-            chosen = q1.poll();
+            return q1.poll();
+
         } else if (new HuffNode.ByWeight().compare(q1Head, q2Head) <= 0) {
-            // break ties by choosing the item in q1
-            chosen = q1.poll();
+            return q1.poll();
         } else {
-            chosen = q2.poll();
+            return q2.poll();
         }
-        return chosen;
     }
 
     /**
-     * Compresses the given data by first computing a canonical Huffman code,
-     * and then using it as compression code.
-     * The compressed data will include (in this order):
-     * - a long: length (in bytes) of the Huffman tree representation;
-     * - a long: length (in bits) of the compressed representation of the original data;
-     * - representation of the canonical Huffman tree;
-     * - compressed representation of the original data.
+     * A recursive depth-first tree traversal algorithm for computing codewords
+     * of a given Huffman tree. Going to the left child appends a zero, going to
+     * the right child appends a one.
      *
-     * @param originalData The data to be compressed.
-     * @return Compressed data.
-     */
-    @Override
-    public BitSequence compressData(byte[] originalData) {
-        HuffNode[] leafNodes = computeCanonicalHuffmanTree(originalData);
-        BitSequence[] huffmanCode = extractHuffmanCode(leafNodes);
-        TreeRepresentation treeRepresentation = new TreeRepresentation(leafNodes);
-        int treeRepresentationLength = treeRepresentation.getTotalLength();
-        int dataOffset = OFFSET_TREE + treeRepresentationLength;
-        // larger then needed, but can be almost sure of no resizing, so faster
-        // (and probably less memory use anyway, because avoids resizing big arrays
-        // which would imply double memory use of one array, and if garbage collection
-        // is slow, maybe even three times as much memory or more)
-        byte[] bits = new byte[dataOffset + originalData.length];
-        byte[] originalDataLength = Utils.toByteArray(originalData.length);
-        Utils.arrayCopy(originalDataLength, 0, bits, 0, originalDataLength.length);
-        bits[OFFSET_CWLENGTHS_LENGTH] = (byte) treeRepresentation.getCodewordLengthsLength();
-        Utils.arrayCopy(treeRepresentation.getBytes(), 0, bits, OFFSET_TREE, treeRepresentationLength);
-        BitSequence compressedData = new BitSequence(bits, Byte.SIZE, dataOffset);
-        for (byte b : originalData) {
-            compressedData.append(huffmanCode[Byte.toUnsignedInt(b)]);
-        }
-        bits = compressedData.getBits();
-        bits[OFFSET_FREEBITS] = (byte) compressedData.getFreeBits();
-        return compressedData;
-    }
-
-    /**
-     * A recursive tree DFS for computing codewords given a Huffman tree.
-     *
-     * @param root
+     * @param node The current node.
      */
     private static void computeCodewords(HuffNode node, BitSequence codeword) {
 
@@ -181,30 +243,48 @@ public final class Huffman extends CompressionAlgorithm {
     }
 
     /**
-     * Please note: leafNodes should be sorted in canonical order (see
-     * HuffNode.ByCanonicalOrder).
+     * Given the leaf nodes of a Huffman tree, changes the codewords contained
+     * in them to obtain a canonical Huffman code. Please note: the leaves
+     * should be sorted in canonical order (for more info see
+     * https://en.wikipedia.org/wiki/Canonical_Huffman_code).
      *
-     * @param leafNodes
+     * @param leafNodes All the leaf nodes of a Huffman tree; the leaf nodes
+     * must be sorted in canonical order.
      */
     private static void convertToCanonical(HuffNode[] leafNodes) {
+
         BitSequence canonicalCodeword = new BitSequence();
+
         long previousBitLength;
         long currentBitLength = leafNodes[0].getCodeword().getLengthInBits();
+
         for (long i = 0; i < currentBitLength; i++) {
             canonicalCodeword.append(false);
         }
         leafNodes[0].setCodeword(canonicalCodeword);
+
         for (int i = 1; i < leafNodes.length; i++) {
+
             canonicalCodeword = canonicalCodeword.nextSequence();
+
             previousBitLength = currentBitLength;
             currentBitLength = leafNodes[i].getCodeword().getLengthInBits();
             for (long j = 0; j < currentBitLength - previousBitLength; j++) {
                 canonicalCodeword.append(false);
             }
+
             leafNodes[i].setCodeword(canonicalCodeword);
         }
     }
 
+    /**
+     * Extracts the Huffman code contained in the given leaf nodes of a Huffman
+     * tree.
+     *
+     * @param leafNodes All the leaf nodes of a Huffman tree.
+     * @return An array containing the extracted Huffman code. The codeword of a
+     * given byte value (symbol) can be found using its unsigned value as index.
+     */
     private static BitSequence[] extractHuffmanCode(HuffNode[] leafNodes) {
         BitSequence[] huffmanCode = new BitSequence[Utils.POSSIBLE_BYTE_VALUES_COUNT];
         for (HuffNode leaf : leafNodes) {
@@ -223,24 +303,36 @@ public final class Huffman extends CompressionAlgorithm {
      */
     @Override
     public byte[] decompressData(byte[] compressedData) {
-        int originalDataLength = Utils.extractInt(compressedData);
-        TreeRepresentation treeRepresentation = new TreeRepresentation(compressedData);
-        int freeBits = compressedData[OFFSET_FREEBITS];
-        HuffNode huffmanTreeRoot = buildTreeFromRepresentation(treeRepresentation);
-        int dataOffset = OFFSET_TREE + treeRepresentation.getTotalLength();
-        BitSequence compressedBitSeq = new BitSequence(compressedData, freeBits);
-        compressedBitSeq.setReadPosition(dataOffset, 0);
+
+        int originalDataLength = Utils.extractInt(compressedData, OFFSET_ORIG_DATA_LENGTH);
         byte[] originalData = new byte[originalDataLength];
+
+        TreeRepresentation treeRepresentation = new TreeRepresentation(compressedData);
+        HuffNode huffmanTreeRoot = buildTreeFromRepresentation(treeRepresentation);
+
+        int freeBits = compressedData[OFFSET_FREEBITS];
+        BitSequence compressedBitSeq = new BitSequence(compressedData, freeBits);
+
+        int dataOffset = OFFSET_TREE + treeRepresentation.getTotalLength();
+        compressedBitSeq.setReadPosition(dataOffset, 0);
+
         parseData(huffmanTreeRoot, compressedBitSeq, originalData);
+
         return originalData;
     }
 
-    // this cwlengthsLentgh is actually only length of the first half of the treerepr
+    /**
+     * Builds a canonical Huffman tree using the given representation.
+     *
+     * @param treeRepresentation The representation that will used to build the
+     * canonical Huffman tree.
+     * @return The root of the Huffman tree that was built.
+     */
     private static HuffNode buildTreeFromRepresentation(TreeRepresentation treeRepresentation) {
         HuffNode[] leafNodes = treeRepresentation.buildLeafNodes();
         convertToCanonical(leafNodes);
-        HuffNode huffmanTree = buildTree(leafNodes);
-        return huffmanTree;
+        HuffNode root = buildTree(leafNodes);
+        return root;
     }
 
     private static HuffNode buildTree(HuffNode[] leafNodes) {
@@ -251,12 +343,25 @@ public final class Huffman extends CompressionAlgorithm {
         return root;
     }
 
+    /**
+     * Builds a path from node fromNode to leaf node toLeaf, using the codeword
+     * contained in toLeaf, creating new nodes along the path when they don't
+     * exist yet.
+     *
+     * @param fromNode The starting node of the path to be built.
+     * @param toLeaf The destination leaf node of the path to be built; the
+     * codeword contained in this node will be used to build the path (zero
+     * corresponds to the left child, one corresponds to the right child).
+     */
     private static void buildPath(HuffNode fromNode, HuffNode toLeaf) {
+
         HuffNode from = fromNode;
         BitSequence codeword = toLeaf.getCodeword();
         long codewordLength = codeword.getLengthInBits();
         HuffNode next;
+
         for (long i = 0; i < codewordLength - 1; i++) {
+
             if (codeword.readNextBit()) {
                 next = from.getRightChild();
                 if (next == null) {
@@ -270,8 +375,10 @@ public final class Huffman extends CompressionAlgorithm {
                     from.setLeftChild(next);
                 }
             }
+
             from = next;
         }
+
         if (codeword.readNextBit()) {
             from.setRightChild(toLeaf);
         } else {
@@ -279,12 +386,25 @@ public final class Huffman extends CompressionAlgorithm {
         }
     }
 
+    /**
+     * Parses compressedDataBS bit by bit with the given Huffman tree, writing
+     * the obtained symbols to originalData.
+     *
+     * @param root The root of the Huffman tree to be used to parse the data.
+     * @param compressedDataBS The data to be parsed.
+     * @param originalData The array which will contain the symbols obtained
+     * while parsing the compressed data.
+     */
     private static void parseData(HuffNode root, BitSequence compressedDataBS, byte[] originalData) {
+
         HuffNode currentNode = root;
         int i = 0;
         Boolean bit;
+
         while ((bit = compressedDataBS.readNextBit()) != null) {
+
             currentNode = bit ? currentNode.getRightChild() : currentNode.getLeftChild();
+
             if (currentNode.isLeaf()) {
                 originalData[i++] = currentNode.getSymbol();
                 currentNode = root;
