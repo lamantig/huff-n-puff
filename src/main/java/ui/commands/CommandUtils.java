@@ -18,7 +18,9 @@ public final class CommandUtils {
 
     public static final CompressionAlgorithm[] ALGORITHMS = new CompressionAlgorithm[]{
         new Huffman(),
-        new LZW()
+        new LZW(),
+        new LZW(16, 196663),
+        new LZW(20, 393161)
     };
 
     public static final String CHOICE_LIST_FORMAT = "\t%-15s%s\n";
@@ -127,14 +129,12 @@ public final class CommandUtils {
      * @return Compression algorithm corresponding to the given name.
      */
     public static CompressionAlgorithm getAlgorithmByName(String name) {
-        switch (name) {
-            case Huffman.NAME:
-                return ALGORITHMS[0];
-            case LZW.NAME:
-                return ALGORITHMS[1];
-            default:
-                return null;
+        for (CompressionAlgorithm a : ALGORITHMS) {
+            if (a.getName().equals(name)) {
+                return a;
+            }
         }
+        return null;
     }
 
     /**
@@ -145,13 +145,11 @@ public final class CommandUtils {
      * @return Compression algorithm corresponding to the given file extension.
      */
     public static CompressionAlgorithm getAlgorithmByExtension(String extension) {
-        switch (extension) {
-            case Huffman.COMPRESSED_FILE_EXTENSION:
-                return ALGORITHMS[0];
-            case LZW.COMPRESSED_FILE_EXTENSION:
-                return ALGORITHMS[1];
-            default:
-                return null;
+        for (CompressionAlgorithm a : ALGORITHMS) {
+            if (a.getExtension().equals(extension)) {
+                return a;
+            }
         }
+        return null;
     }
 }

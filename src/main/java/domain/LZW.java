@@ -1,11 +1,11 @@
 package domain;
 
 /**
- * A class with static methods for data compression/decompression using an
+ * A class with methods for data compression/decompression using an
  * implementation of the Lempel–Ziv–Welch algorithm with variable-length
  * codewords and dictionary resets when full.
  */
-public class LZW extends CompressionAlgorithm {
+public final class LZW extends CompressionAlgorithm {
 
     /**
      * Minimum length for a codeword; since the symbol alphabet is made up of
@@ -20,39 +20,42 @@ public class LZW extends CompressionAlgorithm {
      * 20 don't make any improvement in the compression size, and they increase
      * memory usage, which may result in an OutOfMemoryError.
      */
-    private static final int MAX_CW_LENGTH = 12;
+    private final int maxCodewordLength;
+    private static final int DEFAULT_MAX_CW_LENGTH = 12;
 
     /**
-     * The hash table size can (and probably should) be changed depending on the
-     * value of {@link #MAX_CW_LENGTH}. Some example values: for a MAX_CW_LENGTH
+     * The hash table size that will be passed to ByteSequcence and
+     * LZWDictionary. It can (and probably should) be changed depending on the
+     * value of {@link #maxCodewordLength}. Some example values: for a MAX_CW_LENGTH
      * of 12, 12289; for 16, 196663; for 20, 393161. Here are more candidate
      * values in increasing order (they are all prime numbers as far as possible
      * from any power of 2): 12289, 24527, 49193, 98347, 196663, 393161, 786337,
      * 1572919, 3145661, 6291529, 12582971, 25165913, 50331709, 100663207.
      */
-    public static final int HASH_TABLE_SIZE = 12289;
+    private final int hashTableSize;
+    public static final int DEFAULT_HASH_TABLE_SIZE = 12289;
     /**
-     * The hash factor used in the rolling hash function for the ByteSequence
-     * class. The value of 257 was chosen because it is a prime number slightly
-     * larger than the size of the alphabet (symbols are single bytes, so the
-     * size of the alphabet is 256).
+     * The hash factor that will be used in the rolling hash function for the
+     * ByteSequence class. The value of 257 was chosen because it is a prime
+     * number slightly larger than the size of the alphabet (symbols are single
+     * bytes, so the size of the alphabet is 256).
      */
     public static final int HASH_FACTOR = 257;
 
     /**
      * The file extension used for files compressed using this class; it
-     * includes a number indicating the value of {@link #MAX_CW_LENGTH} so that
+     * includes a number indicating the value of {@link #maxCodewordLength} so that
      * the same value can be used for decompression.
      */
-    public static final String COMPRESSED_FILE_EXTENSION = ".lzw" + MAX_CW_LENGTH;
+    private final String compressedFileExtension;
     /**
      * Short name for this algorithm (used in TUI).
      */
-    public static final String NAME = "lzw";
+    private final String name;
     /**
      * Longer name for this algorithm (used in TUI).
      */
-    public static final String DESCRIPTION = "Lempel-Ziv-Welch";
+    private final String description;
 
     /**
      * When the new codeword to be inserted into the dictionary reaches this
@@ -62,7 +65,7 @@ public class LZW extends CompressionAlgorithm {
     /**
      * The maximum value for codeword, after which the dictionary will be reset.
      */
-    private static final int POSSIBLE_CW_VALUES_COUNT = 1 << MAX_CW_LENGTH;
+    private final int possibleCodewordValuesCount;
 
     /**
      * Offset (in bytes) from the beginning of compressed files, indicating
@@ -81,10 +84,37 @@ public class LZW extends CompressionAlgorithm {
      */
     private static final int OFFSET_DATA = OFFSET_FREEBITS + Byte.SIZE;
 
+    /**
+     * Returns an instance of LZW with default values for {@link #maxCodewordLength}
+     * and {@link #hashTableSize}.
+     */
+    public LZW() {
+        this(DEFAULT_MAX_CW_LENGTH, DEFAULT_HASH_TABLE_SIZE);
+    }
+
+    /**
+     * Returns an instance of LZW with the specified values for
+     * {@link #maxCodewordLength} and {@link #hashTableSize}.
+     *
+     * @param maxCodewordLength Maximum length for variable-length LZW codewords (it
+     * determines the maximum size of the dictionary).
+     * @param hashTableSize Size of the hash table that will be passed to
+     * {@link ByteSequence} and {@link LZWDictionary}.
+     */
+    public LZW(int maxCodewordLength, int hashTableSize) {
+        this.maxCodewordLength = maxCodewordLength;
+        this.hashTableSize = hashTableSize;
+        possibleCodewordValuesCount = 1 << maxCodewordLength;
+        description = "Lempel-Ziv-Welch with variable-length codewords "
+                + "(max length " + maxCodewordLength + ")";
+        name = "lzw" + maxCodewordLength;
+        compressedFileExtension = "." + name;
+    }
+
     @Override
     public BitSequence compressData(byte[] originalData) {
 
-        Dictionary dict = new LZWDictionary();
+        Dictionary dict = new LZWDictionary(hashTableSize, HASH_FACTOR);
         initializeDictionary(dict);
         byte[] bytes = new byte[originalData.length];
         byte[] originalDataLength = Utils.toByteArray(originalData.length);
@@ -94,7 +124,7 @@ public class LZW extends CompressionAlgorithm {
 
         int i = 0;
         int newCodeword = Utils.POSSIBLE_BYTE_VALUES_COUNT;
-        ByteSequence string = new ByteSequence();
+        ByteSequence string = new ByteSequence(hashTableSize, HASH_FACTOR);
         string.append(originalData[i]);
         ByteSequence nextString;
         Integer codewordForString = dict.get(string);
@@ -115,7 +145,7 @@ public class LZW extends CompressionAlgorithm {
                 compressedData.append(codewordForString, codeWordLength);
 
                 if (newCodeword == lengthThreshold) {
-                    if (++codeWordLength > MAX_CW_LENGTH) {
+                    if (++codeWordLength > maxCodewordLength) {
                         dict.clear();
                         initializeDictionary(dict);
                         newCodeword = Utils.POSSIBLE_BYTE_VALUES_COUNT;
@@ -151,7 +181,7 @@ public class LZW extends CompressionAlgorithm {
         BitSequence compressedBitSeq = new BitSequence(compressedData, freeBits);
         compressedBitSeq.setReadPosition(OFFSET_DATA, 0);
 
-        ByteSequence[] dict = new ByteSequence[POSSIBLE_CW_VALUES_COUNT];
+        ByteSequence[] dict = new ByteSequence[possibleCodewordValuesCount];
         initializeDictionary(dict);
         int codeWordLength = MIN_CW_LENGTH;
         int lengthThreshold = FIRST_LENGTH_THRESHOLD;
@@ -176,7 +206,7 @@ public class LZW extends CompressionAlgorithm {
             // codeWordLength is updated one codeword before the threshold
             if (newCodeword == lengthThreshold - 1) {
 
-                if (++codeWordLength > MAX_CW_LENGTH) {
+                if (++codeWordLength > maxCodewordLength) {
                     // this is the only case when string is not entered in dict
                     reinitializeDictionary(dict);
                     newCodeword = Utils.POSSIBLE_BYTE_VALUES_COUNT;
@@ -212,23 +242,23 @@ public class LZW extends CompressionAlgorithm {
 
     private static void reinitializeDictionary(ByteSequence[] dict) {
         int codeword = Utils.POSSIBLE_BYTE_VALUES_COUNT;
-        while (codeword < POSSIBLE_CW_VALUES_COUNT) {
+        while (codeword < dict.length) {
             dict[codeword++] = null;
         }
     }
 
     @Override
     public String getExtension() {
-        return COMPRESSED_FILE_EXTENSION;
+        return compressedFileExtension;
     }
 
     @Override
     public String getName() {
-        return NAME;
+        return name;
     }
 
     @Override
     public String getDescription() {
-        return DESCRIPTION;
+        return description;
     }
 }

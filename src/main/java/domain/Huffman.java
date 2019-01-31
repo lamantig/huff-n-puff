@@ -1,23 +1,22 @@
 package domain;
 
 /**
- * A class with static methods for data compression/decompression using Huffman
- * coding.
+ * A class with methods for data compression/decompression using Huffman coding.
  */
 public final class Huffman extends CompressionAlgorithm {
 
     /**
      * The file extension used for files compressed using this class.
      */
-    public static final String COMPRESSED_FILE_EXTENSION = ".huff";
+    private static final String COMPRESSED_FILE_EXTENSION = ".huff";
     /**
      * Short name for this algorithm (used in TUI).
      */
-    public static final String NAME = "huffman";
+    private static final String NAME = "huffman";
     /**
      * Longer name for this algorithm (used in TUI).
      */
-    public static final String DESCRIPTION = "canonical Huffman coding";
+    private static final String DESCRIPTION = "canonical Huffman coding";
 
     /**
      * Offset (in bytes) from the beginning of compressed files, indicating

@@ -3,10 +3,20 @@ package domain;
 public class LZWDictionary implements Dictionary {
 
     private final LZWDictEntry[] hashTable;
+    private static final int DEFAULT_HASH_TABLE_SIZE = LZW.DEFAULT_HASH_TABLE_SIZE;
+
+    private final int hashFactor;
+    private static final int DEFAULT_HASH_FACTOR = LZW.HASH_FACTOR;
+
     private int cachedHashCode;
 
     public LZWDictionary() {
-        hashTable = new LZWDictEntry[LZW.HASH_TABLE_SIZE];
+        this(DEFAULT_HASH_TABLE_SIZE, DEFAULT_HASH_FACTOR);
+    }
+
+    public LZWDictionary(int hashTableSize, int hashFactor) {
+        hashTable = new LZWDictEntry[hashTableSize];
+        this.hashFactor = hashFactor;
         resetCachedHashCode();
     }
 
@@ -23,8 +33,8 @@ public class LZWDictionary implements Dictionary {
         if (cachedHashCode < 0) {
             cachedHashCode = key.hashCode();
         } else {
-            cachedHashCode = (int) (((long) cachedHashCode * LZW.HASH_FACTOR
-                    + Byte.toUnsignedInt(key.getLast())) % LZW.HASH_TABLE_SIZE);
+            cachedHashCode = (int) (((long) cachedHashCode * hashFactor
+                    + Byte.toUnsignedInt(key.getLast())) % hashTable.length);
         }
         LZWDictEntry entry = hashTable[cachedHashCode];
         while (entry != null) {

@@ -2,17 +2,31 @@ package domain;
 
 public class ByteSequence {
 
+    public final int hashTableSize;
+    private static final int DEFAULT_HASH_TABLE_SIZE = LZW.DEFAULT_HASH_TABLE_SIZE;
+
+    public final int hashFactor;
+    private static final int DEFAULT_HASH_FACTOR = LZW.HASH_FACTOR;
+
     private static final int SIZE_INCREMENT = 7;
 
     private byte[] bytes;
     private int length;
 
     public ByteSequence() {
+        this(DEFAULT_HASH_TABLE_SIZE, DEFAULT_HASH_FACTOR);
+    }
+
+    public ByteSequence(int hashTableSize, int hashFactor) {
+        this.hashTableSize = hashTableSize;
+        this.hashFactor = hashFactor;
         bytes = new byte[SIZE_INCREMENT];
         length = 0;
     }
 
     public ByteSequence(byte[] bytes) {
+        hashTableSize = DEFAULT_HASH_TABLE_SIZE;
+        hashFactor = DEFAULT_HASH_FACTOR;
         this.bytes = bytes;
         this.length = bytes.length;
     }
@@ -54,7 +68,7 @@ public class ByteSequence {
     public int hashCode() {
         long hash = 0;
         for (int i = 0; i < length; i++) {
-            hash = (hash * LZW.HASH_FACTOR + Byte.toUnsignedInt(bytes[i])) % LZW.HASH_TABLE_SIZE;
+            hash = (hash * hashFactor + Byte.toUnsignedInt(bytes[i])) % hashTableSize;
         }
         return (int) hash;
     }
