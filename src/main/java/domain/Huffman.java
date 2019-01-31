@@ -51,7 +51,7 @@ public final class Huffman extends CompressionAlgorithm {
      * - unsigned byte: length (in bytes) of the first part (codewordLengths) of
      * the representation of the canonical Huffman tree used for compression
      * (the total length of the tree representation can be calculated from this,
-     * see {@link TreeRepresentation#this});
+     * see {@link TreeRepresentation});
      * - unsigned byte: unused bits in the last byte of the compressed data
      * (freeBits variable of the BitSequence class);
      * - representation of the canonical Huffman tree;

@@ -100,9 +100,9 @@ public class BitSequence {
      * Returns an instance of BitSequence corresponding to the bits contained in
      * the given array, up to bits[writeIndex] (excluding the last n bits of
      * byte bits[writeIndex], where n is given by parameter freeBits). Will set
-     * bits[i] = 0 for all i > writeIndex. Be careful, since the bits array
-     * (given as parameter) isn't copied, instead it is used and modified
-     * directly (until it needs to be resized).
+     * bits[i] = 0 for all i which are greater than writeIndex. Be careful,
+     * since the bits array (given as parameter) isn't copied, instead it is
+     * used and modified directly (until it needs to be resized).
      *
      * @param bits Byte array containing the bits of the bit sequence.
      * @param freeBits Amount of free bits of byte bits[writeIndex]; it can have

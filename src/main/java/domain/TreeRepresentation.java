@@ -167,7 +167,7 @@ public class TreeRepresentation {
      * Returns the total length (in bytes) of this tree representation.
      *
      * @return Total length (in bytes) of this tree representation (equal to
-     * {@link getBytes()}.length).
+     * {@link #getBytes()}.length).
      */
     public int getTotalLength() {
         return bytes.length;
