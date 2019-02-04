@@ -8,18 +8,8 @@ public class LZWDictionaryTest {
 
     private Dictionary dict;
 
-    private ByteSequence
-            k1,
-            k2,
-            k3,
-            k4,
-            k5;
-
-    private Integer v1,
-            v2,
-            v3,
-            v4,
-            v5;
+    private ByteSequence k1;
+    private Integer v1;
 
     @BeforeEach
     public void setUp() {
@@ -29,9 +19,9 @@ public class LZWDictionaryTest {
     @Test
     public void putPutsOneEntryInDictionaryAndGetReturnsItsValue() {
         k1 = new ByteSequence(new byte[]{(byte) 0, (byte) 5, (byte) 255, (byte) 43, (byte) 79, (byte) 104});
-        Integer value1 = 51;
-        dict.put(k1, value1);
-        assertEquals(value1, dict.get(k1));
+        v1 = 51;
+        dict.put(k1, v1);
+        assertEquals(v1, dict.get(k1));
     }
 
     @Test
@@ -44,16 +34,16 @@ public class LZWDictionaryTest {
     public void getReturnsCorrectValuesWhenManyEntriesArePutInDictionaryInAnOrderKindaPlausibleForLZW() {
 
         k1 = new ByteSequence(new byte[]{(byte) 5});
-        k2 = new ByteSequence(new byte[]{(byte) 7});
-        k3 = new ByteSequence(new byte[]{(byte) 5, (byte) 231});
-        k4 = new ByteSequence(new byte[]{(byte) 5, (byte) 231, (byte) 101});
-        k5 = new ByteSequence(new byte[]{(byte) 5, (byte) 231, (byte) 101, (byte) 89});
+        ByteSequence k2 = new ByteSequence(new byte[]{(byte) 7});
+        ByteSequence k3 = new ByteSequence(new byte[]{(byte) 5, (byte) 231});
+        ByteSequence k4 = new ByteSequence(new byte[]{(byte) 5, (byte) 231, (byte) 101});
+        ByteSequence k5 = new ByteSequence(new byte[]{(byte) 5, (byte) 231, (byte) 101, (byte) 89});
 
         v1 = 51;
-        v2 = 98;
-        v3 = 305;
-        v4 = 3009;
-        v5 = 2074;
+        Integer v2 = 98;
+        Integer v3 = 305;
+        Integer v4 = 3009;
+        Integer v5 = 2074;
 
         dict.put(k1, v1);
         dict.put(k2, v2);

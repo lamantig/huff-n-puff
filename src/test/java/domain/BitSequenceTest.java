@@ -404,6 +404,7 @@ public class BitSequenceTest {
     private String appendIntegersToStringAndBitSeq(String bitSeqString,
             BitSequence bitSeq, int[] toBeAppended, int[] leadingZeroes) {
 
+        String newBitSeqString = bitSeqString;
         char[] zeroes;
         String tbaStr;
 
@@ -414,11 +415,11 @@ public class BitSequenceTest {
                 Arrays.fill(zeroes, '0');
                 tbaStr = new String(zeroes) + Integer.toBinaryString(tba);
 
-                bitSeqString += tbaStr;
+                newBitSeqString += tbaStr;
                 bitSeq.append(tba, tbaStr.length());
             }
         }
 
-        return bitSeqString;
+        return newBitSeqString;
     }
 }
