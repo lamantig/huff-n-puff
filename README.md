@@ -8,23 +8,23 @@ Compress and decompress files using renowned algorithms, and compare their perfo
 
 ## documentation
 
-[software requirements specification](https://github.com/nigoshh/huff-n-puff/blob/master/documentation/software-requirements-specification.md)
+[software requirements specification](https://github.com/nigoshh/huff-n-puff/blob/master/docs/software-requirements-specification.md)
 
-[software implementation documentation](https://github.com/nigoshh/huff-n-puff/blob/master/documentation/software-implementation-documentation.md)
+[software implementation documentation](https://github.com/nigoshh/huff-n-puff/blob/master/docs/software-implementation-documentation.md)
 
-[software test documentation](https://github.com/nigoshh/huff-n-puff/blob/master/documentation/software-test-documentation.md)
+[software test documentation](https://github.com/nigoshh/huff-n-puff/blob/master/docs/software-test-documentation.md)
 
-[user guide](https://github.com/nigoshh/huff-n-puff/blob/master/documentation/user-guide.md)
+[user guide](https://github.com/nigoshh/huff-n-puff/blob/master/docs/user-guide.md)
 
-[timesheet](https://github.com/nigoshh/huff-n-puff/blob/master/documentation/timesheet.md)
+[timesheet](https://github.com/nigoshh/huff-n-puff/blob/master/docs/timesheet.md)
 
 ## weekly reports
 
--   [week 1](https://github.com/nigoshh/huff-n-puff/blob/master/documentation/weekly-reports/week1.md)
--   [week 2](https://github.com/nigoshh/huff-n-puff/blob/master/documentation/weekly-reports/week2.md)
--   [week 3](https://github.com/nigoshh/huff-n-puff/blob/master/documentation/weekly-reports/week3.md)
--   [week 4](https://github.com/nigoshh/huff-n-puff/blob/master/documentation/weekly-reports/week4.md)
--   [week 5](https://github.com/nigoshh/huff-n-puff/blob/master/documentation/weekly-reports/week5.md)
--   [week 6](https://github.com/nigoshh/huff-n-puff/blob/master/documentation/weekly-reports/week6.md)
+-   [week 1](https://github.com/nigoshh/huff-n-puff/blob/master/docs/weekly-reports/week1.md)
+-   [week 2](https://github.com/nigoshh/huff-n-puff/blob/master/docs/weekly-reports/week2.md)
+-   [week 3](https://github.com/nigoshh/huff-n-puff/blob/master/docs/weekly-reports/week3.md)
+-   [week 4](https://github.com/nigoshh/huff-n-puff/blob/master/docs/weekly-reports/week4.md)
+-   [week 5](https://github.com/nigoshh/huff-n-puff/blob/master/docs/weekly-reports/week5.md)
+-   [week 6](https://github.com/nigoshh/huff-n-puff/blob/master/docs/weekly-reports/week6.md)
 
 University of Helsinki, Data Structures and Algorithms course project (tiralabra or traha)
