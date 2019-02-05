@@ -8,6 +8,8 @@ Compress and decompress files using renowned algorithms, and compare their perfo
 
 ## documentation
 
+[javadoc](https://nigoshh.github.io/huff-n-puff/javadoc/)
+
 [software requirements specification](https://github.com/nigoshh/huff-n-puff/blob/master/docs/software-requirements-specification.md)
 
 [software implementation documentation](https://github.com/nigoshh/huff-n-puff/blob/master/docs/software-implementation-documentation.md)
