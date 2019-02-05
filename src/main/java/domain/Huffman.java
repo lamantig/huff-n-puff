@@ -1,7 +1,9 @@
 package domain;
 
 /**
- * A class with methods for data compression/decompression using Huffman coding.
+ * A {@link CompressionAlgorithm} implementation which uses canonical Huffman
+ * coding. For more details see {@link #compressData(byte[]) compressData} and
+ * {@link #decompressData(byte[]) decompressData}.
  */
 public final class Huffman extends CompressionAlgorithm {
 

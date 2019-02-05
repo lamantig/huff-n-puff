@@ -12,8 +12,9 @@ public class HuffNode {
      */
     private final Byte symbol;
     /**
-     * Number of occurrences of the symbol in the original data (if node is a leaf), or sum of the
-     * weights of this node's children (if node is internal).
+     * Number of occurrences of the symbol in the original data (if node is a
+     * leaf), or sum of the weights of this node's children (if node is
+     * internal).
      */
     private final Long weight;
     /**
@@ -25,6 +26,9 @@ public class HuffNode {
     private HuffNode leftChild,
                      rightChild;
 
+    /**
+     * Compares HuffNodes by weight, in ascending order.
+     */
     public static class ByWeight implements Comparator<HuffNode> {
         @Override
         public int compare(HuffNode hn1, HuffNode hn2) {
@@ -32,16 +36,24 @@ public class HuffNode {
         }
     }
 
+    /**
+     * Compares HuffNodes by canonical order: first by codeword length (in
+     * ascending order), then by symbol (in alphabetical order). Here we use the
+     * byte alphabet, so the alphabetical order is the numerical ascending order
+     * of the bytes interpreted as unsigned (for more info see
+     * https://en.wikipedia.org/wiki/Canonical_Huffman_code).
+     */
     public static class ByCanonicalOrder implements Comparator<HuffNode> {
         @Override
         public int compare(HuffNode hn1, HuffNode hn2) {
-            int byLength = hn1.codeword.getLengthInBits()
+            // first by codeword length
+            int byCodewordLength = hn1.codeword.getLengthInBits()
                     .compareTo(hn2.codeword.getLengthInBits());
-            if (byLength == 0) {
-                // alphabetical order
+            if (byCodewordLength == 0) {
+                // then by symbol in alphabetical order
                 return Byte.toUnsignedInt(hn1.symbol) - Byte.toUnsignedInt(hn2.symbol);
             }
-            return byLength;
+            return byCodewordLength;
         }
     }
 
@@ -87,6 +99,14 @@ public class HuffNode {
         this.rightChild = rightChild;
     }
 
+    /**
+     * Returns true if this node is a leaf node. This means that it was created
+     * using a constructor for leaf nodes, and thus {@link #getSymbol()} will
+     * return a non-null value.
+     *
+     * @return True if this node is a leaf node, and thus its variable symbol
+     * has a non-null value.
+     */
     public boolean isLeaf() {
         return symbol != null;
     }

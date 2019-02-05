@@ -12,6 +12,10 @@ import static ui.commands.Compare.FILE_R_ERROR;
 import static ui.commands.Compare.FILE_W_ERROR;
 import static ui.commands.Compare.WITH;
 
+/**
+ * Represents some stats about a compression algorithm; contains also static
+ * methods to compute such stats.
+ */
 public class Stats {
 
     public long originalFileSize;
@@ -19,10 +23,27 @@ public class Stats {
     public long compressionElapsedTime;
     public long decompressionElapsedTime;
 
+    /**
+     * Returns the data compression ratio, which is the ratio between
+     * uncompressed size and compressed size (see
+     * https://en.wikipedia.org/wiki/Data_compression_ratio).
+     *
+     * @return The data compression ratio.
+     */
     public double compressionRatio() {
         return (double) originalFileSize / compressedFileSize;
     }
 
+    /**
+     * Computes stats about the given compression algorithm.
+     *
+     * @param algorithm Compression algorithm to be used.
+     * @param originalFilePath Path of the file to be compressed.
+     * @param originalData Content of the file to be compressed.
+     * @param reps How many times the file will be compressed and decompressed.
+     * @param io An IO used to print possible error messages.
+     * @return Stats about the given compression algorithm.
+     */
     public static Stats computeStats(CompressionAlgorithm algorithm,
             Path originalFilePath, byte[] originalData, int reps, IO io) {
 
@@ -69,6 +90,14 @@ public class Stats {
         return stats;
     }
 
+    /**
+     * Returns a Stats object in which each variable is equal to the sum of the
+     * values it gets in each of the Stats object in the given array.
+     *
+     * @param stats The Stats objects whose variables' values will be summed.
+     * @return A Stats object in which each variable is equal to the sum of the
+     * values it gets in each of the Stats object in the given array.
+     */
     public static Stats[] sumStats(Stats[][] stats) {
 
         Stats[] summaryStats = new Stats[stats.length];

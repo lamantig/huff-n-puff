@@ -173,7 +173,18 @@ public class BitSequence {
         }
     }
 
-    // for LZW codewords, works with: 1 <= bitLength <= Integer.SIZE (no check)
+    /**
+     * Appends to the end of this bit sequence the n rightmost bits (where n is
+     * given by bitLength) of the binary representation of the given integer
+     * (which represents a LZW codeword). The parameters are not checked, so be
+     * sure to call this with legal values (see the parameters' description).
+     *
+     * @param codeword Represents a LZW codeword.
+     * @param bitLength The numbers of leftmost bits (of codeword's binary
+     * representation) which will be appended to the end of this bit sequence.
+     * It can have values ranging from 1 (inclusive) to Integer.SIZE
+     * (inclusive).
+     */
     public void append(int codeword, int bitLength) {
 
         int writeOffset = Byte.SIZE - freeBits;
@@ -199,8 +210,8 @@ public class BitSequence {
     }
 
     /**
-     * Returns the value of the bit at the reading position, and then increments
-     * the reading position by one.
+     * Reads the value of the bit at the current reading position, then
+     * increments the reading position by one.
      *
      * @return False for 0, true for 1.
      */
@@ -216,7 +227,17 @@ public class BitSequence {
         return null;
     }
 
-    // works with: 9 <= bitLength <= Integer.SIZE
+    /**
+     * Reads the next n bits (where n is given by parameter bitLength) starting
+     * at the current reading position, interpreting them as an integer, then
+     * increments the reading position by n places (where n is given by
+     * parameter bitLength). The parameter is not checked, so be sure to call
+     * this with legal values (see the parameter's description).
+     *
+     * @param bitLength The number of bits to be read; it can have values
+     * ranging from 9 (inclusive) to Integer.SIZE (inclusive).
+     * @return An integer which corresponds to the read bits.
+     */
     public Integer readNextInt(int bitLength) {
 
         if (absolutePosition(writeIndex, Byte.SIZE - freeBits)
@@ -349,8 +370,8 @@ public class BitSequence {
      * ranging from 0 to Byte.SIZE - 1.
      */
     public int getFreeBits() {
-        // it makes sense to show externally that freeBits are zero when they are
-        // Byte.SIZE (consider also what getLengthInBytes() returns)
+        // it makes sense to show externally that freeBits are zero when they are Byte.SIZE
+        // (consider also what getLengthInBytes() returns)
         return freeBits == Byte.SIZE ? 0 : freeBits;
     }
 

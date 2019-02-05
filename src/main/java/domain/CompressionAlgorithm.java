@@ -3,6 +3,9 @@ package domain;
 import io.FileUtils;
 import java.nio.file.Path;
 
+/**
+ * An abstract class with methods for data compression/decompression.
+ */
 public abstract class CompressionAlgorithm {
 
     /**
@@ -27,6 +30,12 @@ public abstract class CompressionAlgorithm {
                 compressedDataBitSeq.getLengthInBytes());
     }
 
+    /**
+     * Compresses the given data.
+     *
+     * @param originalData Data to be compressed
+     * @return Compressed data.
+     */
     public abstract BitSequence compressData(byte[] originalData);
 
     /**
@@ -50,6 +59,12 @@ public abstract class CompressionAlgorithm {
         return FileUtils.writeFile(originalFilePath, originalData);
     }
 
+    /**
+     * Decompresses the given compressed data.
+     *
+     * @param compressedData Data to be decompressed.
+     * @return Decompressed data.
+     */
     public abstract byte[] decompressData(byte[] compressedData);
 
     /**

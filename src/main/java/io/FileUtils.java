@@ -90,6 +90,16 @@ public class FileUtils {
         return Paths.get(cutPathString);
     }
 
+    /**
+     * Returns an array containing the paths of all the files found in the
+     * directory at the given path. It is not recursive, it goes only one level
+     * deep, meaning that if the given directory contains subdirectories they
+     * will simply be ignored.
+     *
+     * @param directoryPath Path of the directory whose files' paths will be
+     * returned.
+     * @return Paths of the files found in the given directory.
+     */
     public static Path[] getFilePaths(Path directoryPath) {
         try {
             return Files.walk(directoryPath).filter(Files::isRegularFile).toArray(Path[]::new);

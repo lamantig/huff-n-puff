@@ -6,7 +6,7 @@ package domain;
  * bit-length of their codeword, and secondly by alphabetical order); the first
  * part (called "codewordLengths") contains the number of symbols for each
  * bit-length. See Wikipedia for more details:
- * https://en.wikipedia.org/wiki/Canonical_Huffman_code#Encoding_the_codebook
+ * https://en.wikipedia.org/wiki/Canonical_Huffman_code#Encoding_the_codebook .
  */
 public class TreeRepresentation {
 
@@ -84,9 +84,6 @@ public class TreeRepresentation {
             symbolsLength = SPECIAL_CASE;
         } else {
             symbolsLength = 0;
-            // offset where the second part of treerepr starts
-            // meaning that first part is cwLengths, second is symbols (or original alphabet)
-            // so totalLength = codewordLengthsLength + symbolsLength
             int symbolsOffset = Huffman.OFFSET_TREE + codewordLengthsLength;
             for (int i = Huffman.OFFSET_TREE; i < symbolsOffset; i++) {
                 symbolsLength += Byte.toUnsignedInt(compressedData[i]);

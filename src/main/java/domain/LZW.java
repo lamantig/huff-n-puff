@@ -1,9 +1,8 @@
 package domain;
 
 /**
- * A class with methods for data compression/decompression using an
- * implementation of the Lempel–Ziv–Welch algorithm with variable-length
- * codewords and dictionary resets when full.
+ * A {@link CompressionAlgorithm} implementation which uses the Lempel–Ziv–Welch
+ * algorithm with variable-length codewords and dictionary resets when full.
  */
 public final class LZW extends CompressionAlgorithm {
 
@@ -26,11 +25,12 @@ public final class LZW extends CompressionAlgorithm {
     /**
      * The hash table size that will be passed to ByteSequcence and
      * LZWDictionary. It can (and probably should) be changed depending on the
-     * value of {@link #maxCodewordLength}. Some example values: for a MAX_CW_LENGTH
-     * of 12, 12289; for 16, 196663; for 20, 393161. Here are more candidate
-     * values in increasing order (they are all prime numbers as far as possible
-     * from any power of 2): 12289, 24527, 49193, 98347, 196663, 393161, 786337,
-     * 1572919, 3145661, 6291529, 12582971, 25165913, 50331709, 100663207.
+     * value of {@link #maxCodewordLength}. Some example values: for a
+     * MAX_CW_LENGTH of 12, 12289; for 16, 196663; for 20, 393161. Here are more
+     * candidate values in increasing order (they are all prime numbers as far
+     * as possible from any power of 2): 12289, 24527, 49193, 98347, 196663,
+     * 393161, 786337, 1572919, 3145661, 6291529, 12582971, 25165913, 50331709,
+     * 100663207.
      */
     private final int hashTableSize;
     public static final int DEFAULT_HASH_TABLE_SIZE = 12289;
@@ -44,8 +44,8 @@ public final class LZW extends CompressionAlgorithm {
 
     /**
      * The file extension used for files compressed using this class; it
-     * includes a number indicating the value of {@link #maxCodewordLength} so that
-     * the same value can be used for decompression.
+     * includes a number indicating the value of {@link #maxCodewordLength} so
+     * that the same value can be used for decompression.
      */
     private final String compressedFileExtension;
     /**
@@ -85,8 +85,8 @@ public final class LZW extends CompressionAlgorithm {
     private static final int OFFSET_DATA = OFFSET_FREEBITS + Byte.SIZE;
 
     /**
-     * Returns an instance of LZW with default values for {@link #maxCodewordLength}
-     * and {@link #hashTableSize}.
+     * Returns an instance of LZW with default values for
+     * {@link #maxCodewordLength} and {@link #hashTableSize}.
      */
     public LZW() {
         this(DEFAULT_MAX_CW_LENGTH, DEFAULT_HASH_TABLE_SIZE);
@@ -96,8 +96,8 @@ public final class LZW extends CompressionAlgorithm {
      * Returns an instance of LZW with the specified values for
      * {@link #maxCodewordLength} and {@link #hashTableSize}.
      *
-     * @param maxCodewordLength Maximum length for variable-length LZW codewords (it
-     * determines the maximum size of the dictionary).
+     * @param maxCodewordLength Maximum length for variable-length LZW codewords
+     * (it determines the maximum size of the dictionary).
      * @param hashTableSize Size of the hash table that will be passed to
      * {@link ByteSequence} and {@link LZWDictionary}.
      */
