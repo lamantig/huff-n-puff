@@ -16,10 +16,10 @@ public class Compare extends BasicCommand {
             COMPARE_ACTION = "used for comparing algorithms",
             SIMPLE = "simple",
             THOROUGH = "thorough",
-            STATS_HEADER = String.format("\t%-15s%13s%19s%19s\n%s", "algorithm",
-                    "d. c. ratio", "compr. time", "decompr. time",
-                    "\t------------------------------------------------------------------"),
-            STATS_FORMAT = "\t%-15s%13.3f%19d%19d\n",
+            STATS_HEADER = String.format("\t%-15s%13s%17s%19s%19s\n%s", "algorithm",
+                    "bits/symbol", "d. c. ratio", "compr. time", "decompr. time",
+                    "\t-----------------------------------------------------------------------------------"),
+            STATS_FORMAT = "\t%-15s%13.3f%17.3f%19d%19d\n",
             ERROR_MSG = "an error occurred while ",
             READING_ERROR = ERROR_MSG + "reading ",
             FILE_R_ERROR = READING_ERROR + "file ",
@@ -99,8 +99,8 @@ public class Compare extends BasicCommand {
 
         for (int i = 0; i < stats.length; i++) {
             io.printf(STATS_FORMAT, CommandUtils.ALGORITHMS[i].getName(),
-                    stats[i].compressionRatio(), stats[i].compressionElapsedTime,
-                    stats[i].decompressionElapsedTime);
+                    stats[i].bitsPerSymbol(), stats[i].compressionRatio(),
+                    stats[i].compressionElapsedTime, stats[i].decompressionElapsedTime);
         }
 
         io.println("");

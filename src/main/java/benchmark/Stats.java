@@ -18,20 +18,32 @@ import static ui.commands.Compare.WITH;
  */
 public class Stats {
 
-    public long originalFileSize;
-    public long compressedFileSize;
+    public long uncompressedSizeInBytes;
+    public long compressedSizeInBits;
     public long compressionElapsedTime;
     public long decompressionElapsedTime;
 
     /**
+     * Returns the compression rate measured in bits per symbol (bps), which is
+     * equal to the quotient of the size of the compressed data in bits to the
+     * size of the uncompressed data in bytes (for more info see
+     * http://www.data-compression.info/Corpora/).
+     *
+     * @return The compression rate measured in bits per symbol (bps).
+     */
+    public double bitsPerSymbol() {
+        return (double) compressedSizeInBits / uncompressedSizeInBytes;
+    }
+
+    /**
      * Returns the data compression ratio, which is the ratio between
-     * uncompressed size and compressed size (see
+     * uncompressed size and compressed size (for more info see
      * https://en.wikipedia.org/wiki/Data_compression_ratio).
      *
      * @return The data compression ratio.
      */
     public double compressionRatio() {
-        return (double) originalFileSize / compressedFileSize;
+        return uncompressedSizeInBytes * Byte.SIZE / (double) compressedSizeInBits;
     }
 
     /**
@@ -49,6 +61,8 @@ public class Stats {
 
         Stats stats = new Stats();
 
+        stats.uncompressedSizeInBytes = originalData.length;
+
         BitSequence compressedDataBitSeq;
         int i = 0;
         long compressionStartingTime = System.nanoTime();
@@ -56,6 +70,8 @@ public class Stats {
             compressedDataBitSeq = algorithm.compressData(originalData);
         } while (++i < reps);
         stats.compressionElapsedTime = System.nanoTime() - compressionStartingTime;
+
+        stats.compressedSizeInBits = compressedDataBitSeq.getLengthInBits();
 
         Path compressedFilePath = originalFilePath.resolveSibling(
                 originalFilePath.getFileName() + algorithm.getExtension());
@@ -84,9 +100,6 @@ public class Stats {
             return null;
         }
 
-        stats.originalFileSize = decompressedData.length;
-        stats.compressedFileSize = compressedData.length;
-
         return stats;
     }
 
@@ -104,8 +117,8 @@ public class Stats {
         for (int i = 0; i < summaryStats.length; i++) {
 
             summaryStats[i] = Stream.of(stats[i]).reduce(new Stats(), (s1, s2) -> {
-                s1.originalFileSize += s2.originalFileSize;
-                s1.compressedFileSize += s2.compressedFileSize;
+                s1.uncompressedSizeInBytes += s2.uncompressedSizeInBytes;
+                s1.compressedSizeInBits += s2.compressedSizeInBits;
                 s1.compressionElapsedTime += s2.compressionElapsedTime;
                 s1.decompressionElapsedTime += s2.decompressionElapsedTime;
                 return s1;
