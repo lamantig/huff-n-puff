@@ -1,6 +1,6 @@
 # timesheet
 
-Total time (hours:minutes): 198:30.
+Total time (hours:minutes): 199:00.
 
 ## week 1
 
@@ -90,5 +90,5 @@ Total time (hours:minutes): 198:30.
 |       2019-02-18 |  1:45 | <span>writing user guide<br>correcting software requirements specification</span> |
 |       2019-02-26 |  0:55 | writing software test documentation |
 |       2019-03-01 |  3:05 | writing software test documentation and software implementation documentation |
-|       2019-03-02 |  1:20 | <span>finishing up documentation and timesheet<br>release</span> |
-| **period total** | 50:30 | お疲れ様ぜぇ～！ |
+|       2019-03-02 |  1:50 | <span>finishing up documentation and timesheet<br>release</span> |
+| **period total** | 51:00 | お疲れ様ぜぇ～！ |
