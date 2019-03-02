@@ -51,16 +51,16 @@ Performance testing was carried out on the corpora for data compression found [h
 
 Compression rate is measured in bits per symbol (bps), which is equal to the quotient of the size of the compressed data in bits to the size of the uncompressed data in bytes. LZW usually achieved better compression rates than Huffman, and LZW with longer maximum codeword length achieved better compression rates than LZW with shorter maximum codeword length (as expected).
 
-![Compression rate, measured in bits per symbol (bps)](https://github.com/nigoshh/huff-n-puff/tree/master/docs/plots/bps.png)
+![Compression rate, measured in bits per symbol (bps)](https://github.com/nigoshh/huff-n-puff/docs/plots/bps.png)
 
 Compression time and decompression time are measured in nanoseconds in the comparison tests. The comparison thorough mode was carried out with a value of 10 for the repetitions parameter, meaning that each file in each corpus was compressed and decompressed 10 times. In the R script the total time in nanoseconds is converted to seconds and divided by 10, so the measure seen in the graphs is the mean time (in seconds) that it took to compress/decompress all the files in a given corpus (once). Compression/decompression times do not include file reading/writing, since they are slow disk operations (which could theoretically take up most of compression/decompression time), and they don't depend on any specific compression algorithm (they are always called in the same way, regardless of the algorithm used for compression/decompression).
 
 Compression times vary significantly from algorithm to algorithm, while decompression times are more similar across different algorithms. The fasts compression times are achieved by Huffman. LZW gets slower and slower as maximum codeword length is increased. This is probably due to the [dictionary implementation](https://github.com/nigoshh/huff-n-puff/blob/master/docs/software-implementation-documentation.md#lzw), which saves (and thus writes to memory) each sequence separately. Sequences could contain only a symbol (byte) and a link to the prefix sequence, since each time a new sequence is added to the dictionary the prefix part of that new sequence already exists in the dictionary, as pointed out in [this implementation by Juha Nieminen](http://warp.povusers.org/EfficientLZW/part2.html).
 
-![Compression time, measured in seconds (bigger file sizes)](https://github.com/nigoshh/huff-n-puff/tree/master/docs/plots/ctm-b.png)
-![Compression time, measured in seconds (smaller file sizes)](https://github.com/nigoshh/huff-n-puff/tree/master/docs/plots/ctm-s.png)
-![Decompression time, measured in seconds (bigger file sizes)](https://github.com/nigoshh/huff-n-puff/tree/master/docs/plots/dtm-b.png)
-![Decompression time, measured in seconds (smaller file sizes)](https://github.com/nigoshh/huff-n-puff/tree/master/docs/plots/dtm-s.png)
+![Compression time, measured in seconds (bigger file sizes)](https://github.com/nigoshh/huff-n-puff/docs/plots/ctm-b.png)
+![Compression time, measured in seconds (smaller file sizes)](https://github.com/nigoshh/huff-n-puff/docs/plots/ctm-s.png)
+![Decompression time, measured in seconds (bigger file sizes)](https://github.com/nigoshh/huff-n-puff/docs/plots/dtm-b.png)
+![Decompression time, measured in seconds (smaller file sizes)](https://github.com/nigoshh/huff-n-puff/docs/plots/dtm-s.png)
 
 ## sources
 
