@@ -1,6 +1,6 @@
 # timesheet
 
-Total time (hours:minutes): 148:00.
+Total time (hours:minutes): 198:30.
 
 ## week 1
 
@@ -67,8 +67,28 @@ Total time (hours:minutes): 148:00.
 |       2019-01-21 |  3:55 | <span>LZWDictionaryTest and debugging<br>substituted LZWDictionary to JavasDict in LZW (slight improvement in speed!)<br>testing fixed-length LZW extreme case (long file whose bytes have all the same value)<br>week 6 report and timesheet</span> |
 | **weekly total** | 22:30 | お疲れ様ぜぇ～！ |
 
-## last week
+## after week 6
 
 |             date |  time | tasks    |
 | ---------------: | ----: | :------- |
-| **weekly total** | 00:00 | お疲れ様ぜぇ～！ |
+|       2019-01-22 |  8:45 | <span>LZW debugging<br>working implementation of variable-length LZW<br>CompressionAlgorithmTest<br>cleaning up (removing unused code)</span> |
+|       2019-01-23 |  4:10 | <span>refactor Stats and related methods (out of Compare into own package)<br>cleaning up (removing unused code)<br>unit tests</span> |
+|       2019-01-24 |  3:00 | <span>unit tests<br>BitSequence debugging<br>added support for different maximum codeword lengths</span> |
+|       2019-01-25 |  2:30 | <span>unit tests<br>fixed compiler warnings<br>HuffNodeTest<br>TreeRepresentationTest</span> |
+|       2019-01-26 |  3:05 | testing and debugging TreeRepresentation (buildLeafNodes method) |
+|       2019-01-27 |  3:05 | <span>cleaning up code<br>writing Javadoc</span> |
+|       2019-01-28 |  0:40 | research on publishing Javadoc |
+|       2019-01-29 |  3:05 | <span>writing Javadoc (Huffman and LZW)<br>experimenting with different hash table sizes<br>minor fix for overflow in hashCode</span> |
+|       2019-01-30 |  0:50 | <span>writing Javadoc<br>researching GitHub Pages</span> |
+|       2019-01-31 |  2:55 | <span>writing Javadoc<br>made LZW customizable (hashTableSize and maxCodewordLength)</span> |
+|       2019-02-04 |  2:35 | writing Javadoc |
+|       2019-02-05 |  2:00 | <span>writing Javadoc<br>publishing Javadoc<br>thinking about changes in Stats (compression rate in bps)</span> |
+|       2019-02-06 |  2:30 | <span>added bits per symbol to Stats and Compare<br>written R script for drawing plots</span> |
+|       2019-02-08 |  0:50 | benchmark testing and making plots |
+|       2019-02-09 |  2:05 | benchmark testing and making plots |
+|       2019-02-17 |  1:20 | writing user guide |
+|       2019-02-18 |  1:45 | <span>writing user guide<br>correcting software requirements specification</span> |
+|       2019-02-26 |  0:55 | writing software test documentation |
+|       2019-03-01 |  3:05 | writing software test documentation and software implementation documentation |
+|       2019-03-02 |  1:20 | finishing up documentation and timesheet |
+| **period total** | 50:30 | お疲れ様ぜぇ～！ |
